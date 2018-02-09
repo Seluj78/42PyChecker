@@ -61,7 +61,7 @@ def check_norme(project_path: str):
         print("No source file (.c) or header (.h) to check")
         return 1
     with open(os.path.dirname(os.path.realpath(__file__)) + "/.mynorme", 'w+') as file:
-        result = subprocess.run('norminette' + files, shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8')
+        result = subprocess.run(['norminette'] + files.split(), stdout=subprocess.PIPE).stdout.decode('utf-8')
         file.write(result)
     error_count = result.count('Error')
     warning_count = result.count('Warning')
@@ -72,4 +72,22 @@ def check_norme(project_path: str):
     return 0
 
 
-sys.exit(check_norme("/Users/jlasne/Clion/libft"))
+def check_42_commandements(project_path:str):
+    """
+    :param project_path: The path of the project where you want to check the author file
+    :return: Will return 0 if everything is ok,
+     1 if the file doesn't exists,
+     2 if the file content is different.
+    """
+    if not os.path.exists(project_path + '/rendu'):
+        print("file `rendu' not found.")
+        return 1
+    with open(project_path + '/rendu', 'r') as file:
+        content = file.read()
+        if content != "En choisissant d'effectuer ma scolarite a 42, je declare adherer a ces regles ainsi qu'aux valeurs morales qu'elles vehiculent.\n":
+            print("Error: The `rendu' file content is different from what is expected.")
+            return 2
+    return 0
+
+
+sys.exit(check_42_commandements("/tmp/jlasne3"))
