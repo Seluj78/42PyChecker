@@ -73,21 +73,7 @@ def check_norme(project_path: str):
     return 0
 
 
-def check_makefile(project_path: str, binary_name: str):
-    """
-    :param project_path: The path of the project
-    :param binary_name: The binary that the makefile makes
-
-    :return: Returns 0 if makefile ok,
-     1 if the makefile doesnt exists
-     2 if the binary wasn't removed
-     3 if the .o files weren't removed
-    """
-    # @todo Split check_makefile in separate methods for each rule
-    makefile_path = project_path + '/Makefile'
-    if not os.path.exists(makefile_path):
-        print("Error: Makefile not found.")
-        return 1
+def check_makefile_clean_dir(project_path: str, binary_name: str):
     with open(os.path.dirname(os.path.realpath(__file__)) + "/.mymakefile", 'w+') as file:
         file.write("Cleaning Directory\n")
         file.write("*------------------------------------------------------*\n")
@@ -96,10 +82,14 @@ def check_makefile(project_path: str, binary_name: str):
         file.write(result + '\n')
         if os.path.exists(project_path + '/' + binary_name):
             file.write("-> Error when processing rule `fclean': It should have removed {}\n".format(binary_name))
-            #return 2 @todo Add an error counter
+            # @todo Add an error counter
         if glob.glob(project_path + '*.o'):
             file.write("-> Error when processing rule `fclean': It should have removed *.o\n")
-            #return 3
+
+
+def check_makefile_all(project_path: str, binary_name: str):
+    makefile_path = project_path + '/Makefile'
+    with open(os.path.dirname(os.path.realpath(__file__)) + "/.mymakefile", 'w+') as file:
         file.write("*------------------------------------------------------*\n")
         file.write("Checking rule: `all'\n")
         if 'all: ' not in open(makefile_path).read():
@@ -114,6 +104,10 @@ def check_makefile(project_path: str, binary_name: str):
             file.write("-> Error when processing rule `fclean': It should NOT have removed *.o\n")
         # @todo  [ -z "$(echo ${MAKEALLTWICE} | grep -i "Nothing to be done")" -a -z "$(echo ${MAKEALLTWICE} | grep -i "is up to date")" ] && printf "%s\n" "-> Failing rule: Processing the rule 'all' twice in a row should result in nothing to be done" && RET=1
 
+
+def check_makefile_clean(project_path: str, binary_name: str):
+    makefile_path = project_path + '/Makefile'
+    with open(os.path.dirname(os.path.realpath(__file__)) + "/.mymakefile", 'w+') as file:
         file.write("*------------------------------------------------------*\n")
         file.write("Checking rule: `clean'\n")
         if 'clean: ' not in open(makefile_path).read():
@@ -128,6 +122,10 @@ def check_makefile(project_path: str, binary_name: str):
         if glob.glob(project_path + '/*.o'):
             file.write("-> Error: Failing Rule: It should have cleaned the *.o")
 
+
+def check_makefile_re(project_path: str, binary_name: str):
+    makefile_path = project_path + '/Makefile'
+    with open(os.path.dirname(os.path.realpath(__file__)) + "/.mymakefile", 'w+') as file:
         file.write("*------------------------------------------------------*\n")
         file.write("Checking rule: `re'\n")
         if 're: ' not in open(makefile_path).read():
@@ -147,6 +145,10 @@ def check_makefile(project_path: str, binary_name: str):
         if inode1 == inode2:
             file.write("-> Failing rule `re': It should have compiled again the binary named {} (inode unchanged)\n".format(binary_name))
 
+
+def check_makefile_fclean(project_path: str, binary_name: str):
+    makefile_path = project_path + '/Makefile'
+    with open(os.path.dirname(os.path.realpath(__file__)) + "/.mymakefile", 'w+') as file:
         file.write("*------------------------------------------------------*\n")
         file.write("Checking rule: `fclean'\n")
         if 'fclean: ' not in open(makefile_path).read():
@@ -160,6 +162,10 @@ def check_makefile(project_path: str, binary_name: str):
         if glob.glob(project_path + '/*.a'):
             file.write("-> Error: Failing Rule: It should have cleaned the *.a")
 
+
+def check_makefile_name(project_path: str, binary_name: str):
+    makefile_path = project_path + '/Makefile'
+    with open(os.path.dirname(os.path.realpath(__file__)) + "/.mymakefile", 'w+') as file:
         file.write("*------------------------------------------------------*\n")
         file.write("Checking rule: `$(NAME)'\n")
         if '$(NAME):' not in open(makefile_path).read():
@@ -172,6 +178,10 @@ def check_makefile(project_path: str, binary_name: str):
             file.write("-> Error when processing rule `fclean': It should NOT have removed *.o\n")
         # @todo  [ -z "$(echo ${MAKEALLTWICE} | grep -i "Nothing to be done")" -a -z "$(echo ${MAKEALLTWICE} | grep -i "is up to date")" ] && printf "%s\n" "-> Failing rule: Processing the rule 'all' twice in a row should result in nothing to be done" && RET=1
 
+
+def check_makefile_phony(project_path: str, binary_name: str):
+    makefile_path = project_path + '/Makefile'
+    with open(os.path.dirname(os.path.realpath(__file__)) + "/.mymakefile", 'w+') as file:
         file.write("*------------------------------------------------------*\n")
         file.write("Checking rule: `.PHONY'\n")
         if '.PHONY:' not in open(makefile_path).read():
@@ -184,6 +194,29 @@ def check_makefile(project_path: str, binary_name: str):
             file.write("--> Error when processing rule `.PHONY': It should not have cleaned the binary named {}\n".format(binary_name))
         if glob.glob(project_path + '/*.o'):
             file.write("-> Error: Failing Rule: It should have cleaned the *.o")
+
+
+def check_makefile(project_path: str, binary_name: str):
+    """
+    :param project_path: The path of the project
+    :param binary_name: The binary that the makefile makes
+
+    :return: Returns 0 if makefile ok,
+     1 if the makefile doesnt exists
+     2 if the binary wasn't removed
+     3 if the .o files weren't removed
+    """
+    makefile_path = project_path + '/Makefile'
+    if not os.path.exists(makefile_path):
+        print("Error: Makefile not found.")
+        return 1
+    check_makefile_clean_dir(project_path, binary_name)
+    check_makefile_all(project_path, binary_name)
+    check_makefile_clean(project_path, binary_name)
+    check_makefile_re(project_path, binary_name)
+    check_makefile_fclean(project_path, binary_name)
+    check_makefile_name(project_path, binary_name)
+    check_makefile_phony(project_path, binary_name)
     return 0
 
 
@@ -284,9 +317,9 @@ def check_libft(project_path: str):
     check_makefile(project_path, "libft.a")
     check_forbidden_functions(project_path, "libft.a")
     run_libftest(project_path)
-    #moulitest
-    #libft-unit-test
-    #maintest
+    # moulitest
+    # libft-unit-test
+    # maintest
     return 0
 
 
