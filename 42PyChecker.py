@@ -13,7 +13,7 @@ def check_author_file(project_path: str):
      2 if there's too many lines in the file,
      3 if the newline char is missing in the end of line
     """
-    # @todo: Add a skip, Add message if author file is set as optional and handle multiple authors
+    # @todo Add a skip, Add message if author file is set as optional and handle multiple authors
     author_fr = project_path + "/auteur"
     author_us = project_path + "/author"
     if os.path.exists(author_fr):
@@ -51,7 +51,7 @@ def check_norme(project_path: str):
      1 if there isn't any file to check,
      2 if some errors/warnings were found
     """
-    # @todo: Add a skip if norme is set as optional
+    # @todo Add a skip if norme is set as optional
     files = ""
     for filename in glob.iglob(project_path + '/**/*.c', recursive=True):
         files = files + ' ' + filename
@@ -82,7 +82,7 @@ def check_makefile(project_path: str, binary_name: str):
      2 if the binary wasn't removed
      3 if the .o files weren't removed
     """
-    # @todo: Split check_makefile in separate methods for each rule
+    # @todo Split check_makefile in separate methods for each rule
     makefile_path = project_path + '/Makefile'
     if not os.path.exists(makefile_path):
         print("Error: Makefile not found.")
@@ -95,7 +95,7 @@ def check_makefile(project_path: str, binary_name: str):
         file.write(result + '\n')
         if os.path.exists(project_path + '/' + binary_name):
             file.write("-> Error when processing rule `fclean': It should have removed {}\n".format(binary_name))
-            #return 2 @todo: Add an error counter
+            #return 2 @todo Add an error counter
         if glob.glob(project_path + '*.o'):
             file.write("-> Error when processing rule `fclean': It should have removed *.o\n")
             #return 3
@@ -111,7 +111,7 @@ def check_makefile(project_path: str, binary_name: str):
             file.write("-> Error when processing rule `fclean': It should have created {}\n".format(binary_name))
         if not glob.glob(project_path + '/*.o'):
             file.write("-> Error when processing rule `fclean': It should NOT have removed *.o\n")
-        # @todo:  [ -z "$(echo ${MAKEALLTWICE} | grep -i "Nothing to be done")" -a -z "$(echo ${MAKEALLTWICE} | grep -i "is up to date")" ] && printf "%s\n" "-> Failing rule: Processing the rule 'all' twice in a row should result in nothing to be done" && RET=1
+        # @todo  [ -z "$(echo ${MAKEALLTWICE} | grep -i "Nothing to be done")" -a -z "$(echo ${MAKEALLTWICE} | grep -i "is up to date")" ] && printf "%s\n" "-> Failing rule: Processing the rule 'all' twice in a row should result in nothing to be done" && RET=1
 
         file.write("*------------------------------------------------------*\n")
         file.write("Checking rule: `clean'\n")
@@ -169,7 +169,7 @@ def check_makefile(project_path: str, binary_name: str):
             file.write("--> Error when processing rule `re': It should have compiled a binary named {}\n".format(binary_name))
         if not glob.glob(project_path + '/*.o'):
             file.write("-> Error when processing rule `fclean': It should NOT have removed *.o\n")
-        # @todo:  [ -z "$(echo ${MAKEALLTWICE} | grep -i "Nothing to be done")" -a -z "$(echo ${MAKEALLTWICE} | grep -i "is up to date")" ] && printf "%s\n" "-> Failing rule: Processing the rule 'all' twice in a row should result in nothing to be done" && RET=1
+        # @todo  [ -z "$(echo ${MAKEALLTWICE} | grep -i "Nothing to be done")" -a -z "$(echo ${MAKEALLTWICE} | grep -i "is up to date")" ] && printf "%s\n" "-> Failing rule: Processing the rule 'all' twice in a row should result in nothing to be done" && RET=1
 
         file.write("*------------------------------------------------------*\n")
         file.write("Checking rule: `.PHONY'\n")
@@ -205,7 +205,7 @@ def check_42_commandements(project_path:str):
 
 
 def check_forbidden_functions(project_path: str, binary: str):
-    # @todo: Refactor check_forbidden_functions to have a modular authorized_functions (to be used on multiple projects)
+    # @todo Refactor check_forbidden_functions to have a modular authorized_functions (to be used on multiple projects)
     authorized_functions = ['free', 'malloc', 'write', 'main']
     functions_called = []
     result = subprocess.run(['nm', project_path + '/' + binary], stdout=subprocess.PIPE).stdout.decode('utf-8')
