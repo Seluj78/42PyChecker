@@ -13,7 +13,7 @@ def check_author_file(project_path: str):
      2 if there's too many lines in the file,
      3 if the newline char is missing in the end of line
     """
-    # @todo: Add a skip if author file set as optional
+    # @todo: Add a skip, Add message if author file is set as optional and handle multiple authors
     author_fr = project_path + "/auteur"
     author_us = project_path + "/author"
     if os.path.exists(author_fr):
@@ -24,22 +24,22 @@ def check_author_file(project_path: str):
         author = "us"
     else:
         print("Author file not found")
-        return 1  # @todo Add message if author file is set as optional
+        return 1
     if count != 1:
         print("Too many lines in author file (Or the file is empty)")
-        return 2  # @todo Add message if author file is set as optional or if project isn't solo
+        return 2
     if author == "fr":
         with open(author_fr, 'r') as file:
             content = file.read()
             if "\n" not in content:
                 print("Missing <newline> character at the end of line")
-                return 3  # @todo: Add message if author file is set as optional and handle multiple authors
+                return 3
     elif author == "us":
         with open(author_us, 'r') as file:
             content = file.read()
             if "\n" not in content:
                 print("Missing <newline> character at the end of line")
-                return 3  # @todo: Add message if author file is set as optional and handle multiple authors
+                return 3
     return 0
 
 
@@ -95,7 +95,7 @@ def check_makefile(project_path: str, binary_name: str):
         file.write(result + '\n')
         if os.path.exists(project_path + '/' + binary_name):
             file.write("-> Error when processing rule `fclean': It should have removed {}\n".format(binary_name))
-            #return 2 @todo: Here it doesnt return, it will just add more errors to the error counter
+            #return 2 @todo: Add an error counter
         if glob.glob(project_path + '*.o'):
             file.write("-> Error when processing rule `fclean': It should have removed *.o\n")
             #return 3
@@ -111,7 +111,7 @@ def check_makefile(project_path: str, binary_name: str):
             file.write("-> Error when processing rule `fclean': It should have created {}\n".format(binary_name))
         if not glob.glob(project_path + '/*.o'):
             file.write("-> Error when processing rule `fclean': It should NOT have removed *.o\n")
-        # todo:  [ -z "$(echo ${MAKEALLTWICE} | grep -i "Nothing to be done")" -a -z "$(echo ${MAKEALLTWICE} | grep -i "is up to date")" ] && printf "%s\n" "-> Failing rule: Processing the rule 'all' twice in a row should result in nothing to be done" && RET=1
+        # @todo:  [ -z "$(echo ${MAKEALLTWICE} | grep -i "Nothing to be done")" -a -z "$(echo ${MAKEALLTWICE} | grep -i "is up to date")" ] && printf "%s\n" "-> Failing rule: Processing the rule 'all' twice in a row should result in nothing to be done" && RET=1
 
         file.write("*------------------------------------------------------*\n")
         file.write("Checking rule: `clean'\n")
@@ -169,7 +169,7 @@ def check_makefile(project_path: str, binary_name: str):
             file.write("--> Error when processing rule `re': It should have compiled a binary named {}\n".format(binary_name))
         if not glob.glob(project_path + '/*.o'):
             file.write("-> Error when processing rule `fclean': It should NOT have removed *.o\n")
-        # @todo :  [ -z "$(echo ${MAKEALLTWICE} | grep -i "Nothing to be done")" -a -z "$(echo ${MAKEALLTWICE} | grep -i "is up to date")" ] && printf "%s\n" "-> Failing rule: Processing the rule 'all' twice in a row should result in nothing to be done" && RET=1
+        # @todo:  [ -z "$(echo ${MAKEALLTWICE} | grep -i "Nothing to be done")" -a -z "$(echo ${MAKEALLTWICE} | grep -i "is up to date")" ] && printf "%s\n" "-> Failing rule: Processing the rule 'all' twice in a row should result in nothing to be done" && RET=1
 
         file.write("*------------------------------------------------------*\n")
         file.write("Checking rule: `.PHONY'\n")
@@ -263,7 +263,7 @@ def check_libft(project_path: str):
     with open(os.path.dirname(os.path.realpath(__file__)) + "/.mystatic", 'w+') as file:
         result = subprocess.run(['sh', 'check_static.sh', project_path], stdout=subprocess.PIPE).stdout.decode('utf-8')
         file.write(result)
-    check_makefile(project_path, "libft.a") # @todo: Have number of errors printed for makefile check
+    check_makefile(project_path, "libft.a")
     check_forbidden_functions(project_path, "libft.a")
     #moulitest
     #libft-unit-test
