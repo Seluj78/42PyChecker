@@ -238,9 +238,7 @@ def check_42_commandements(project_path:str):
     return 0
 
 
-def check_forbidden_functions(project_path: str, binary: str):
-    # @todo Refactor check_forbidden_functions to have a modular authorized_functions (to be used on multiple projects)
-    authorized_functions = ['free', 'malloc', 'write', 'main']
+def check_forbidden_functions(project_path: str, binary: str, authorized_functions):
     functions_called = []
     result = subprocess.run(['nm', project_path + '/' + binary], stdout=subprocess.PIPE).stdout.decode('utf-8')
     for line in result.splitlines():
@@ -293,6 +291,7 @@ def check_libft(project_path: str):
                           'ft_memset.c', 'ft_bzero.c']
     bonus_functions = ['ft_lstnew.c', 'ft_lstdelone.c', 'ft_lstdel.c',
                        'ft_lstiter.c', 'ft_lstadd.c', 'ft_lstmap.c']
+    authorized_functions = ['free', 'malloc', 'write', 'main']
     while True:
         if all([os.path.isfile(project_path + '/' + function) for function in required_functions]):
             break
@@ -315,7 +314,7 @@ def check_libft(project_path: str):
         result = subprocess.run(['sh', 'check_static.sh', project_path], stdout=subprocess.PIPE).stdout.decode('utf-8')
         file.write(result)
     check_makefile(project_path, "libft.a")
-    check_forbidden_functions(project_path, "libft.a")
+    check_forbidden_functions(project_path, "libft.a", authorized_functions)
     run_libftest(project_path)
     # moulitest
     # libft-unit-test
