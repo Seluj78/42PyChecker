@@ -1,20 +1,63 @@
 import os
 import sys
-import subprocess
+import glob
 
 def check_author_file(project_path: str):
+    """
+    :param project_path: The path of the project where you want to check the author file
+
+    :return: This function will return 0 if everything is ok,
+     1 if file not found,
+     2 if there's too many lines in the file,
+     3 if the newline char is missing in the end of line
+    """
     # @todo: Add a skip if author file set as optional
     author_fr = project_path + "/auteur"
     author_us = project_path + "/author"
     if os.path.exists(author_fr):
-        output = subprocess.check_output("awk 'END {printf NR}' " + author_fr, shell=True)
+        count = len(open(author_fr).readlines())
+        author = "fr"
     elif os.path.exists(author_us):
-        output = subprocess.check_output("awk 'END {printf NR}' " + author_us, shell=True)
+        count = len(open(author_us).readlines())
+        author = "us"
     else:
         print("Author file not found")
-        sys.exit()  # @todo Add message if author file is set as optional
-    if output != 1:
+        return 1  # @todo Add message if author file is set as optional
+    if count != 1:
         print("Too many lines in author file (Or the file is empty)")
-        sys.exit()  # @todo Add message if author file is set as optional or if project isn't solo
+        return 2  # @todo Add message if author file is set as optional or if project isn't solo
+    if author == "fr":
+        with open(author_fr, 'r') as file:
+            content = file.read()
+            if "\n" not in content:
+                print("Missing <newline> character at the end of line")
+                return 3  # @todo: Add message if author file is set as optional and handle multiple authors
+    elif author == "us":
+        with open(author_us, 'r') as file:
+            content = file.read()
+            if "\n" not in content:
+                print("Missing <newline> character at the end of line")
+                return 3  # @todo: Add message if author file is set as optional and handle multiple authors
+    return 0
 
-check_author_file("C:/Users/Jules/PycharmProjects/42PyChecker")
+
+def check_norme(project_path: str):
+    """
+    :param project_path: The path of the project where you want to check the author file
+
+    :return: Returns 0 if everything is ok,
+     1 if there isn't any file to check
+    """
+    # @todo: Add a skip if norme is set as optional
+    files = ""
+    with open(os.path.dirname(os.path.realpath(__file__)) + "/.mynorme", 'w+') as file:
+        for filename in glob.iglob(project_path + '/**/*.c', recursive=True):
+            files = files + ' ' + filename
+        for filename in glob.iglob(project_path + '/**/*.h', recursive=True):
+            files = files + ' ' + filename
+    if file == "":
+        print("No source file (.c) or header (.h) to check")
+        return 1
+
+
+sys.exit(check_norme("C:/Users/Jules/Share/ft_printf"))
