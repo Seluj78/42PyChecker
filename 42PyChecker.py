@@ -2,7 +2,7 @@ import os
 import sys
 import glob
 import subprocess
-
+import re
 
 def check_author_file(project_path: str):
     """
@@ -203,6 +203,24 @@ def check_42_commandements(project_path:str):
             return 2
     return 0
 
+
+def check_forbidden_functions(project_path: str, binary: str):
+    # @todo: Refactor check_forbidden_functions to have a modular authorized_functions (to be used on multiple projects)
+    authorized_functions = ['free', 'malloc', 'write', 'main']
+    functions_called = []
+    result = subprocess.run(['nm', project_path + '/' + binary], stdout=subprocess.PIPE).stdout.decode('utf-8')
+    for line in result.splitlines():
+        if "U _" in line:
+            functions_called.append(re.sub(' +', ' ', line))
+    sys_calls = {function.replace(' U _', '') for function in functions_called}
+    sys_calls = [item for item in sys_calls if not item.startswith("ft_")]
+    extra_function_call = [item for item in sys_calls if item not in authorized_functions]
+    with open(os.path.dirname(os.path.realpath(__file__)) + "/.myforbiddenfunctions", 'w+') as file:
+        for item in extra_function_call:
+            file.write("You should justify the use of this function: `{}'\n".format(item))
+    return 0
+
+
 def check_libft(project_path: str):
     required_functions = ['libft.h', 'ft_strcat.c', 'ft_strncat.c',
                           'ft_strlcat.c', 'ft_strchr.c', 'ft_strnstr.c',
@@ -246,11 +264,11 @@ def check_libft(project_path: str):
         result = subprocess.run(['sh', 'check_static.sh', project_path], stdout=subprocess.PIPE).stdout.decode('utf-8')
         file.write(result)
     check_makefile(project_path, "libft.a") # @todo: Have number of errors printed for makefile check
-    #forbidden @todo: Add forbidden function check utility method
+    check_forbidden_functions(project_path, "libft.a")
     #moulitest
     #libft-unit-test
     #maintest
     return 0
 
 
-sys.exit(check_libft("/tmp/libft"))
+sys.exit(check_forbidden_functions("/tmp/libft", "libft.a"))
