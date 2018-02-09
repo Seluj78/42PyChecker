@@ -4,6 +4,7 @@ import glob
 import subprocess
 import re
 
+
 def check_author_file(project_path: str):
     """
     :param project_path: The path of the project where you want to check the author file
@@ -221,6 +222,23 @@ def check_forbidden_functions(project_path: str, binary: str):
     return 0
 
 
+def run_libftest(project_path: str):
+    try:
+        open("libftest/my_config.sh", 'r')
+    except FileNotFoundError:
+        subprocess.run(['bash', "libftest/grademe.sh"])
+    with open('libftest/my_config.sh', 'r') as file:
+        filedata = file.read()
+    filedata = filedata.replace('PATH_LIBFT=~/libft', "PATH_LIBFT=" + project_path)
+    filedata = filedata.replace('PATH_DEEPTHOUGHT=${PATH_TEST}', "PATH_DEEPTHOUGHT=" + os.path.dirname(os.path.realpath(__file__)))
+    with open('libftest/my_config.sh', 'w') as file:
+        file.write(filedata)
+    # @todo Parse libftest output for UI and parse score for display and return values.
+    subprocess.run(['bash', "libftest/grademe.sh", "-s -f -n -u"])
+    os.rename("deepthought", ".mylibftest")
+    return 0
+
+
 def check_libft(project_path: str):
     required_functions = ['libft.h', 'ft_strcat.c', 'ft_strncat.c',
                           'ft_strlcat.c', 'ft_strchr.c', 'ft_strnstr.c',
@@ -265,10 +283,11 @@ def check_libft(project_path: str):
         file.write(result)
     check_makefile(project_path, "libft.a")
     check_forbidden_functions(project_path, "libft.a")
+    run_libftest(project_path)
     #moulitest
     #libft-unit-test
     #maintest
     return 0
 
 
-sys.exit(check_forbidden_functions("/tmp/libft", "libft.a"))
+sys.exit(check_libft("/tmp/libft"))
