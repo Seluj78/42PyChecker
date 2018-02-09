@@ -1,6 +1,8 @@
 import os
 import sys
 import glob
+import subprocess
+
 
 def check_author_file(project_path: str):
     """
@@ -46,18 +48,28 @@ def check_norme(project_path: str):
     :param project_path: The path of the project where you want to check the author file
 
     :return: Returns 0 if everything is ok,
-     1 if there isn't any file to check
+     1 if there isn't any file to check,
+     2 if some errors/warnings were found
     """
     # @todo: Add a skip if norme is set as optional
     files = ""
-    with open(os.path.dirname(os.path.realpath(__file__)) + "/.mynorme", 'w+') as file:
-        for filename in glob.iglob(project_path + '/**/*.c', recursive=True):
-            files = files + ' ' + filename
-        for filename in glob.iglob(project_path + '/**/*.h', recursive=True):
-            files = files + ' ' + filename
-    if file == "":
+    for filename in glob.iglob(project_path + '/**/*.c', recursive=True):
+        files = files + ' ' + filename
+    for filename in glob.iglob(project_path + '/**/*.h', recursive=True):
+        files = files + ' ' + filename
+    if files == "":
         print("No source file (.c) or header (.h) to check")
         return 1
+    with open(os.path.dirname(os.path.realpath(__file__)) + "/.mynorme", 'w+') as file:
+        result = subprocess.run('norminette' + files, shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8')
+        file.write(result)
+    error_count = result.count('Error')
+    warning_count = result.count('Warning')
+    if error_count != 0 and warning_count != 0:
+        print("Found {} errors and {} warnings".format(error_count, warning_count))
+        return 2
+    print("Normed passed")
+    return 0
 
 
-sys.exit(check_norme("C:/Users/Jules/Share/ft_printf"))
+sys.exit(check_norme("/Users/jlasne/Clion/libft"))
