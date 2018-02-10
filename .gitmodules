@@ -1,3 +1,6 @@
 [submodule "libftest"]
 	path = libftest
 	url = https://github.com/jtoty/libftest
+[submodule "moulitest"]
+	path = moulitest
+	url = https://github.com/yyang42/moulitest

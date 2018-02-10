@@ -270,6 +270,59 @@ def run_libftest(project_path: str):
     return 0
 
 
+def moulitest_include_libft_bonuses():
+    """
+    This method removes the `.exclude` extention to the libft bonuses files.
+    """
+    moulitest_libft_tests_path = "moulitest/libft_tests/tests"
+    files = os.listdir(moulitest_libft_tests_path)
+    for file in files:
+        if file[:2] == "02":
+            if file.endswith(".exclude"):
+                os.rename(os.path.join(moulitest_libft_tests_path, file), os.path.join(moulitest_libft_tests_path, file[:-8]))
+
+
+def moulitest_exclude_libft_bonuses():
+    """
+    This method Adds the `.exclude` extention to the libft bonuses files.
+    """
+    moulitest_libft_tests_path = "moulitest/libft_tests/tests"
+    files = os.listdir(moulitest_libft_tests_path)
+    for file in files:
+        if file[:2] == "02":
+            os.rename(os.path.join(moulitest_libft_tests_path, file), os.path.join(moulitest_libft_tests_path, file + '.exclude'))
+
+
+def exec_moulitest(test_name: str):
+    # @todo add a protection if test_name isn't compatible with the current project and if not in list of available test for moulitest
+    with open(os.path.dirname(os.path.realpath(__file__)) + "/.mymoulitest", 'w+') as file:
+        file.write("*------------------------------------------------------*\n")
+        file.write("MOULITEST\n")
+        file.write("Warning: This file contains escape sequences. Please use `cat' to view it properly.\n")
+        file.write("*------------------------------------------------------*\n")
+        # @todo Get the result line of moulitest and parse it.
+        result = subprocess.run('make ' + test_name + ' -C ' + 'moulitest' + ' 2>&1', shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8')
+        file.write(result + '\n')
+
+
+def run_moulitest(project_path: str, has_libft_bonuses: bool, project: str):
+    available_projects = ['ft_ls', 'ft_printf', 'gnl', 'libft', 'libftasm']
+    if project not in available_projects:
+        raise ValueError("given project not in moulitest available projects.")
+    if project == "libft":
+        with open("moulitest/config.ini", 'w+') as file:
+            file.write("LIBFT_PATH = " + project_path)
+        moulitest_include_libft_bonuses()
+        # @todo Fix moulitest makefile (it starts the bonus even when not asked.)
+        if not has_libft_bonuses:
+            moulitest_exclude_libft_bonuses()
+            exec_moulitest("libft_bonus")
+            moulitest_include_libft_bonuses()
+        else:
+            exec_moulitest("libft_bonus")
+    return 0
+
+
 def check_libft(project_path: str):
     required_functions = ['libft.h', 'ft_strcat.c', 'ft_strncat.c',
                           'ft_strlcat.c', 'ft_strchr.c', 'ft_strnstr.c',
@@ -292,6 +345,7 @@ def check_libft(project_path: str):
     bonus_functions = ['ft_lstnew.c', 'ft_lstdelone.c', 'ft_lstdel.c',
                        'ft_lstiter.c', 'ft_lstadd.c', 'ft_lstmap.c']
     authorized_functions = ['free', 'malloc', 'write', 'main']
+    has_libft_bonuses = True
     while True:
         if all([os.path.isfile(project_path + '/' + function) for function in required_functions]):
             break
@@ -302,6 +356,7 @@ def check_libft(project_path: str):
         if all([os.path.isfile(project_path + '/' + function) for function in bonus_functions]):
             break
         else:
+            has_libft_bonuses = False
             print("Warning: not all bonus files are here")
             break
     file_list = []
@@ -316,10 +371,9 @@ def check_libft(project_path: str):
     check_makefile(project_path, "libft.a")
     check_forbidden_functions(project_path, "libft.a", authorized_functions)
     run_libftest(project_path)
-    # moulitest
-    # libft-unit-test
-    # maintest
+    run_moulitest(project_path, has_libft_bonuses, "libft")
+    # @todo add libft-unit-test to the testing suite
+    # @todo add maintest
     return 0
 
-
-sys.exit(check_libft("/tmp/libft"))
+sys.exit(run_moulitest("/tmp/libft", False, "libft"))
