@@ -1,3 +1,5 @@
+#@IgnoreInspection BashAddShebang
+
 TOTAL=$(find "$1" -type f -name "*.c")
 OLDIFS=${IFS}
 IFS=$'\n'

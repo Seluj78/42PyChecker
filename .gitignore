@@ -101,3 +101,5 @@ ENV/
 .mypy_cache/
 .idea/
 .my*
+libft_main.c
+libft_main.out
