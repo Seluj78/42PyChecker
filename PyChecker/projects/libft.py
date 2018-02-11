@@ -6,8 +6,8 @@
 import os
 import glob
 import subprocess
-from PyChecker.Utils import author, forbidden_functions, makefile, norme
-from PyChecker.Tests import maintest, moulitest, libftest
+from PyChecker.utils import author, forbidden_functions, makefile, norme
+from PyChecker.testing_suite import maintest, moulitest, libftest
 
 
 def check_bonuses(project_path: str, required_functions, bonus_functions):
@@ -36,7 +36,7 @@ def count_extras(project_path: str, required_functions, bonus_functions):
     return extra_functions
 
 
-def check(project_path: str, root_path: str):
+def check(root_path: str, args):
     required_functions = ['libft.h', 'ft_strcat.c', 'ft_strncat.c',
                           'ft_strlcat.c', 'ft_strchr.c', 'ft_strnstr.c',
                           'ft_strrchr.c', 'ft_strclr.c', 'ft_strcmp.c',
@@ -58,19 +58,28 @@ def check(project_path: str, root_path: str):
     bonus_functions = ['ft_lstnew.c', 'ft_lstdelone.c', 'ft_lstdel.c',
                        'ft_lstiter.c', 'ft_lstadd.c', 'ft_lstmap.c']
     authorized_functions = ['free', 'malloc', 'write', 'main']
-    extra_functions = count_extras(project_path, required_functions, bonus_functions)
+    extra_functions = count_extras(args.path, required_functions, bonus_functions)
     print("You have {} extra functions.".format(len(extra_functions)))
-    author.check(project_path)
-    norme.check(project_path, root_path)
-    with open(root_path + "/.mystatic", 'w+') as file:
-        result = subprocess.run(['sh', 'scripts/check_static.sh', project_path],
-                                stdout=subprocess.PIPE).stdout.decode('utf-8')
-        file.write(result)
-    makefile.check(project_path, "libft.a", root_path)
-    forbidden_functions.check(project_path, "libft.a", authorized_functions, root_path)
-    libftest.run(project_path, root_path)
-    has_libft_bonuses = check_bonuses(project_path, required_functions, bonus_functions)
-    moulitest.run(project_path, has_libft_bonuses, "libft", root_path)
-    maintest.run_libft(project_path, root_path)
+
+    if not args.no_author:
+        author.check(args.path)
+    if not args.no_norm:
+        norme.check(args.path, root_path)
+    if not args.no_static:
+        with open(root_path + "/.mystatic", 'w+') as file:
+            result = subprocess.run(['sh', 'scripts/check_static.sh', args.path],
+                                    stdout=subprocess.PIPE).stdout.decode('utf-8')
+            file.write(result)
+    if not args.no_makefile:
+        makefile.check(args.path, "libft.a", root_path)
+    if not args.no_forbidden_functions:
+        forbidden_functions.check(args.path, "libft.a", authorized_functions, root_path)
+    if not args.no_libftest:
+        libftest.run(args.path, root_path)
+    if not args.no_moulitest:
+        has_libft_bonuses = check_bonuses(args.path, required_functions, bonus_functions)
+        moulitest.run(args.path, has_libft_bonuses, "libft", root_path)
+    if not args.no_maintest:
+        maintest.run_libft(args.path, root_path)
     # @todo add libft-unit-test to the testing suite
     return 0
