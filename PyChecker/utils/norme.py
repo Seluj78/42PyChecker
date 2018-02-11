@@ -18,6 +18,9 @@ def check(project_path: str, root_path: str):
      1 if there isn't any file to check,
      2 if some errors/warnings were found
     """
+    print("*---------------------------------------------------------------*")
+    print("*----------------------------NORM-------------------------------*")
+    print("*---------------------------------------------------------------*")
     files = ""
     for filename in glob.iglob(project_path + '/**/*.c', recursive=True):
         files = files + ' ' + filename
@@ -33,6 +36,8 @@ def check(project_path: str, root_path: str):
                                     stderr=subprocess.STDOUT).stdout.decode('utf-8')
         except FileNotFoundError:
             file.write("Error: Norminette not found.\n")
+            print("--> Error: `norminette': command not found.")
+            return 3
         else:
             file.write(result)
             error_count = result.count('Error')
@@ -41,4 +46,5 @@ def check(project_path: str, root_path: str):
                 print("Found {} errors and {} warnings".format(error_count,
                                                                warning_count))
                 return 2
+    print("-- NTR (Nothing to Report)")
     return 0

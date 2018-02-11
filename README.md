@@ -55,7 +55,7 @@ This option has no effect when used without the option `--project`.
 Specify the absolute path of directory of your project.  
 e.g.: `python3 ./42PyChecker.py --project=libft --path=/Users/admin/Projects/libft/`.
 
-##### `--no-author`, `--no-norm`, `--no-makefile`, `--no-forbidden-functions`, `--no-static`, `--no-moulitest`, `--no-maintest`, `--no-libftest`
+##### `--no-author`, `--no-norm`, `--no-makefile`, `--no-forbidden-functions`, `--no-static`, `--no-moulitest`, `--no-maintest`, `--no-libftest`, `--no-extra`
 
 Disable a specific test.
 

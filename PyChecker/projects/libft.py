@@ -2,11 +2,9 @@
     Copyright (C) 2018 Jules Lasne <jules.lasne@gmail.com>
     See full notice in `LICENSE'
 """
-
 import os
 import glob
-import subprocess
-from PyChecker.utils import author, forbidden_functions, makefile, norme
+from PyChecker.utils import author, forbidden_functions, makefile, norme, static
 from PyChecker.testing_suite import maintest, moulitest, libftest
 
 
@@ -33,6 +31,12 @@ def count_extras(project_path: str, required_functions, bonus_functions):
     for file in glob.glob(project_path + '/*.c'):
         file_list.append(file.replace(project_path + '/', ''))
     extra_functions = [item for item in file_list if item not in required_functions and item not in bonus_functions]
+    print("*---------------------------------------------------------------*")
+    print("*------------------------Extra functions:-----------------------*")
+    print("*---------------------------------------------------------------*")
+    print("You have {} extra functions.".format(len(extra_functions)))
+    for function in extra_functions:
+        print(function)
     return extra_functions
 
 
@@ -58,18 +62,15 @@ def check(root_path: str, args):
     bonus_functions = ['ft_lstnew.c', 'ft_lstdelone.c', 'ft_lstdel.c',
                        'ft_lstiter.c', 'ft_lstadd.c', 'ft_lstmap.c']
     authorized_functions = ['free', 'malloc', 'write', 'main']
-    extra_functions = count_extras(args.path, required_functions, bonus_functions)
-    print("You have {} extra functions.".format(len(extra_functions)))
-
+    if not args.no_extra:
+        # @todo Stats on all c/h files of project, like with `cloc' ?
+        count_extras(args.path, required_functions, bonus_functions)
     if not args.no_author:
         author.check(args.path)
     if not args.no_norm:
         norme.check(args.path, root_path)
     if not args.no_static:
-        with open(root_path + "/.mystatic", 'w+') as file:
-            result = subprocess.run(['sh', 'scripts/check_static.sh', args.path],
-                                    stdout=subprocess.PIPE).stdout.decode('utf-8')
-            file.write(result)
+        static.check(root_path, args)
     if not args.no_makefile:
         makefile.check(args.path, "libft.a", root_path)
     if not args.no_forbidden_functions:

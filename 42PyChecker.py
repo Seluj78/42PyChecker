@@ -33,6 +33,7 @@ def main():
     parser.add_argument("--no-makefile", help="Disables Makefile check", action="store_true")
     parser.add_argument("--no-norm", help="Disables norm check", action="store_true")
     parser.add_argument("--no-static", help="Disables static functions check", action="store_true")
+    parser.add_argument("--no-extra", help="Disables stats and checks on your extra functions", action="store_true")
     parser.add_argument("-p", "--path", help="The path of the project you want to test.", default="", type=str)
     parser.add_argument("--show-w", help="Displays the warranty warning from the license.", action="store_true")
     parser.add_argument("--show-c", help="Displays the conditions warning from the license.", action="store_true")

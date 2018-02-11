@@ -14,6 +14,9 @@ def run_libft(project_path: str, root_path: str):
 
     :param project_path: The path of the project you want to test.
     """
+    print("*---------------------------------------------------------------*")
+    print("*----------------------------Maintest---------------------------*")
+    print("*---------------------------------------------------------------*")
     # These are the functions that the maintest tests for the libft.
     maintest_functions = ['memset', 'bzero', 'memcpy', 'memccpy', 'memmove',
                           'memchr', 'memcmp', 'strlen', 'strdup', 'strcpy',
@@ -55,9 +58,11 @@ def run_libft(project_path: str, root_path: str):
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.STDOUT).stdout.decode('utf-8')
         file.write(result + '\n')
+        print(result)
         result = subprocess.run(['./libft_main.out'], stdout=subprocess.PIPE,
                                 stderr=subprocess.STDOUT).stdout.decode('utf-8')
         # @todo: Count number of OK and FAILs and yellow tests to get score for maintest
         file.write(result + '\n')
+        print(result)
     os.remove("libft_main.c")
     os.remove("libft_main.out")

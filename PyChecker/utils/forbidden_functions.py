@@ -16,6 +16,9 @@ def check(project_path: str, binary: str, authorized_func, root_path: str):
     :param binary_name: The binary that you want to analyze
     :param authorized_func: The functions authorized by the project.
     """
+    print("*---------------------------------------------------------------*")
+    print("*----------------------Forbidden functions:---------------------*")
+    print("*---------------------------------------------------------------*")
     functions_called = []
     # @todo Check difference between Darwin and Linux `nm'
     result = subprocess.run(['nm', project_path + '/' + binary],
@@ -32,4 +35,5 @@ def check(project_path: str, binary: str, authorized_func, root_path: str):
             # This is to ignore functions like `__stack_chk_fail'
             if not item.startswith("__"):
                 file.write("You should justify the use of this function: `{}'\n".format(item))
+                print("You should justify the use of this function: `{}'".format(item))
     return 0

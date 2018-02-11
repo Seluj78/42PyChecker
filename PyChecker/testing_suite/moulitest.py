@@ -10,7 +10,7 @@ def include_libft_bonuses():
     """
     This method removes the `.exclude` extention to the libft bonuses files.
     """
-    moulitest_libft_tests_path = "testing_suites/moulitest/libft_tests/testing_suite"
+    moulitest_libft_tests_path = "testing_suites/moulitest/libft_tests/tests"
     files = os.listdir(moulitest_libft_tests_path)
     for file in files:
         if file[:2] == "02":
@@ -23,7 +23,7 @@ def exclude_libft_bonuses():
     """
     This method Adds the `.exclude` extention to the libft bonuses files.
     """
-    moulitest_libft_tests_path = "testing_suites/moulitest/libft_tests/testing_suite"
+    moulitest_libft_tests_path = "testing_suites/moulitest/libft_tests/tests"
     files = os.listdir(moulitest_libft_tests_path)
     for file in files:
         if file[:2] == "02":
@@ -45,9 +45,13 @@ def execute_test(test_name: str, root_path: str):
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.STDOUT).stdout.decode('utf-8')
         file.write(result + '\n')
+    print(result)
 
 
 def run(project_path: str, has_libft_bonuses: bool, project: str, root_path: str):
+    print("*---------------------------------------------------------------*")
+    print("*--------------------------Moulitest----------------------------*")
+    print("*---------------------------------------------------------------*")
     available_projects = ['ft_ls', 'ft_printf', 'gnl', 'libft', 'libftasm']
     #  Available projects checks if the given project corresponds to one the moulitest tests.
     if project not in available_projects:

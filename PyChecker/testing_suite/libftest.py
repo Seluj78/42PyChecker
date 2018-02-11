@@ -13,6 +13,9 @@ def run(project_path: str, root_path: str):
 
     :param project_path: The path of the project you want to test.
     """
+    print("*---------------------------------------------------------------*")
+    print("*----------------------------Libftest---------------------------*")
+    print("*---------------------------------------------------------------*")
     try:
         open("testing_suites/libftest/my_config.sh", 'r')
     except FileNotFoundError:
@@ -28,12 +31,14 @@ def run(project_path: str, root_path: str):
     result = subprocess.run(['bash', "testing_suites/libftest/grademe.sh",
                              "-l -s -f -n -u"], stdout=subprocess.PIPE,
                             stderr=subprocess.STDOUT).stdout.decode('utf-8')
-    os.rename("deepthought", ".mylibftest")
-    with open(root_path + "/.mylibftest", 'a') as file:
+    os.rename("deepthought", ".mylibftest-deepthought")
+    print("Deepthought file too big. Not printed. See `.mylibftest-deepthought'.")
+    with open(root_path + "/.mylibftest", 'w+') as file:
         file.write("*------------------------------------------------------*\n")
         file.write("LIBFTEST\n")
         file.write("Warning: This file contains escape sequences. Please use "
                    "`cat' to view it properly.\n")
         file.write("*------------------------------------------------------*\n")
         file.write(result)
+    print(result)
     return 0

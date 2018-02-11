@@ -18,6 +18,9 @@ def check(project_path: str):
      3 if the newline char is missing in the end of line
     """
     # @todo message and handle multiple authors
+    print("*---------------------------------------------------------------*")
+    print("*--------------------------Author file--------------------------*")
+    print("*---------------------------------------------------------------*")
     author_fr = project_path + "/auteur"
     author_us = project_path + "/author"
     if os.path.exists(author_fr):
@@ -27,21 +30,22 @@ def check(project_path: str):
         count = len(open(author_us).readlines())
         author = "us"
     else:
-        print("Author file not found")
+        print("--> Error: Author file not found")
         return 1
     if count != 1:
-        print("Too many lines in author file (Or the file is empty)")
+        print("--> Error: Too many lines in author file (Or the file is empty)")
         return 2
     if author == "fr":
         with open(author_fr, 'r') as file:
             content = file.read()
             if "\n" not in content:
-                print("Missing <newline> character at the end of line")
+                print("--> Error: Missing <newline> character at the end of line")
                 return 3
     elif author == "us":
         with open(author_us, 'r') as file:
             content = file.read()
             if "\n" not in content:
-                print("Missing <newline> character at the end of line")
+                print("--> Error: Missing <newline> character at the end of line")
                 return 3
+    print("-- NTR (Nothing to Report)")
     return 0
