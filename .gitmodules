@@ -1,9 +1,9 @@
 [submodule "libftest"]
-	path = libftest
+	path = testing_suites/libftest
 	url = https://github.com/jtoty/libftest
 [submodule "Maintest"]
-	path = Maintest
+	path = testing_suites/Maintest
 	url = https://github.com/QuentinPerez/Maintest
 [submodule "moulitest"]
-	path = moulitest
+	path = testing_suites/moulitest
 	url = https://github.com/yyang42/moulitest

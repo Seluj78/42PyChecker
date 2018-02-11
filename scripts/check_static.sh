@@ -1,5 +1,8 @@
 #@IgnoreInspection BashAddShebang
 
+#    Copyright (C) 2018 Jules Lasne <jules.lasne@gmail.com>
+#    See full notice in `LICENSE'
+
 TOTAL=$(find "$1" -type f -name "*.c")
 OLDIFS=${IFS}
 IFS=$'\n'

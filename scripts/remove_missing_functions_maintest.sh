@@ -1,3 +1,6 @@
+#    Copyright (C) 2018 Jules Lasne <jules.lasne@gmail.com>
+#    See full notice in `LICENSE'
+
 #!/bin/bash
 
 RMVFUNCTIONS=$1
@@ -20,4 +23,4 @@ $0 ~ RMVFUNCTIONS {
     }
   }
 }
-' "Maintest/libft/main.c" 1>"libft_main.c" 2>".mymaintest"
+' "testing_suites/Maintest/libft/main.c" 1>"libft_main.c" 2>".mymaintest"
