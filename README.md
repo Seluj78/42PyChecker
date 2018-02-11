@@ -27,7 +27,7 @@ Complete unit tests are handled through external frameworks whose sources are au
 ## Install & launch
 This script requires python 3.6 or above to work.
 ```bash
-git clone https://github.com/seluj78/42PyChecker ~/42PyChecker
+git clone https://github.com/seluj78/42PyChecker --recursive ~/42PyChecker
 cd ~/42PyChecker && python3 ./42PyChecker.py
 ```
 
