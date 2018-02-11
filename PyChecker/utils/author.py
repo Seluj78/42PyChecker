@@ -17,7 +17,7 @@ def check(project_path: str):
      2 if there's too many lines in the file,
      3 if the newline char is missing in the end of line
     """
-    # @todo Add a skip + message and handle multiple authors
+    # @todo message and handle multiple authors
     author_fr = project_path + "/auteur"
     author_us = project_path + "/author"
     if os.path.exists(author_fr):

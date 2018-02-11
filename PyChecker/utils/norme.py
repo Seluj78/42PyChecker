@@ -18,7 +18,6 @@ def check(project_path: str, root_path: str):
      1 if there isn't any file to check,
      2 if some errors/warnings were found
     """
-    # @todo Add a skip if norme is set as optional
     files = ""
     for filename in glob.iglob(project_path + '/**/*.c', recursive=True):
         files = files + ' ' + filename
