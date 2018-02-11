@@ -5,6 +5,7 @@ import subprocess
 import re
 import shutil
 
+
 def check_author_file(project_path: str):
     """
     :param project_path: The path of the project where you want to check the author file
@@ -62,14 +63,17 @@ def check_norme(project_path: str):
         print("No source file (.c) or header (.h) to check")
         return 1
     with open(os.path.dirname(os.path.realpath(__file__)) + "/.mynorme", 'w+') as file:
-        result = subprocess.run(['norminette'] + files.split(), stdout=subprocess.PIPE).stdout.decode('utf-8')
-        file.write(result)
-    error_count = result.count('Error')
-    warning_count = result.count('Warning')
-    if error_count != 0 and warning_count != 0:
-        print("Found {} errors and {} warnings".format(error_count, warning_count))
-        return 2
-    print("Normed passed")
+        try:
+            result = subprocess.run(['norminette'] + files.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.decode('utf-8')
+        except FileNotFoundError:
+            file.write("Error: Norminette not found.\n")
+        else:
+            file.write(result)
+            error_count = result.count('Error')
+            warning_count = result.count('Warning')
+            if error_count != 0 and warning_count != 0:
+                print("Found {} errors and {} warnings".format(error_count, warning_count))
+                return 2
     return 0
 
 
@@ -78,7 +82,7 @@ def check_makefile_clean_dir(project_path: str, binary_name: str):
         file.write("Cleaning Directory\n")
         file.write("*------------------------------------------------------*\n")
         file.write("")
-        result = subprocess.run('make ' + '-C ' + project_path + ' fclean', shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8')
+        result = subprocess.run('make ' + '-C ' + project_path + ' fclean', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.decode('utf-8')
         file.write(result + '\n')
         if os.path.exists(project_path + '/' + binary_name):
             file.write("-> Error when processing rule `fclean': It should have removed {}\n".format(binary_name))
@@ -89,14 +93,14 @@ def check_makefile_clean_dir(project_path: str, binary_name: str):
 
 def check_makefile_all(project_path: str, binary_name: str):
     makefile_path = project_path + '/Makefile'
-    with open(os.path.dirname(os.path.realpath(__file__)) + "/.mymakefile", 'w+') as file:
+    with open(os.path.dirname(os.path.realpath(__file__)) + "/.mymakefile", 'a') as file:
         file.write("*------------------------------------------------------*\n")
         file.write("Checking rule: `all'\n")
         if 'all: ' not in open(makefile_path).read():
             file.write("-> Error: rule `all' not found in the Makefile.\n")
         if 'all: $(NAME)' not in open(makefile_path).read():
             file.write("-> Error: rule `all' should call the rule `$(NAME)'\n")
-        result = subprocess.run('make ' + '-C ' + project_path + ' all', shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8')
+        result = subprocess.run('make ' + '-C ' + project_path + ' all', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.decode('utf-8')
         file.write(result + '\n')
         if not os.path.exists(project_path + '/' + binary_name):
             file.write("-> Error when processing rule `fclean': It should have created {}\n".format(binary_name))
@@ -107,7 +111,7 @@ def check_makefile_all(project_path: str, binary_name: str):
 
 def check_makefile_clean(project_path: str, binary_name: str):
     makefile_path = project_path + '/Makefile'
-    with open(os.path.dirname(os.path.realpath(__file__)) + "/.mymakefile", 'w+') as file:
+    with open(os.path.dirname(os.path.realpath(__file__)) + "/.mymakefile", 'a') as file:
         file.write("*------------------------------------------------------*\n")
         file.write("Checking rule: `clean'\n")
         if 'clean: ' not in open(makefile_path).read():
@@ -115,7 +119,7 @@ def check_makefile_clean(project_path: str, binary_name: str):
         if not os.path.exists(project_path + '/' + binary_name):
             file.write("-> Error: Cannot test rule `clean' because rule `all' failed\n")
             # Stop the makefile test here
-        result = subprocess.run('make ' + '-C ' + project_path + ' clean', shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8')
+        result = subprocess.run('make ' + '-C ' + project_path + ' clean', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.decode('utf-8')
         file.write(result + '\n')
         if not os.path.exists(project_path + '/' + binary_name):
             file.write("-> Error: Failing Rule: It should not have cleaned the binary named {}.".format(binary_name))
@@ -125,7 +129,7 @@ def check_makefile_clean(project_path: str, binary_name: str):
 
 def check_makefile_re(project_path: str, binary_name: str):
     makefile_path = project_path + '/Makefile'
-    with open(os.path.dirname(os.path.realpath(__file__)) + "/.mymakefile", 'w+') as file:
+    with open(os.path.dirname(os.path.realpath(__file__)) + "/.mymakefile", 'a') as file:
         file.write("*------------------------------------------------------*\n")
         file.write("Checking rule: `re'\n")
         if 're: ' not in open(makefile_path).read():
@@ -134,7 +138,7 @@ def check_makefile_re(project_path: str, binary_name: str):
             file.write("-> Error: Cannot test rule `re' because rule `all' failed\n")
         inode1 = os.stat(project_path + '/' + binary_name).st_ino
         file.write("-- Before running rule `re', the {} inode is {}\n".format(binary_name, inode1))
-        result = subprocess.run('make ' + '-C ' + project_path + ' re', shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8')
+        result = subprocess.run('make ' + '-C ' + project_path + ' re', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.decode('utf-8')
         file.write(result + '\n')
         inode2 = os.stat(project_path + '/' + binary_name).st_ino
         file.write("-- After running rule `re', the {} inode is {}\n".format(binary_name, inode2))
@@ -148,12 +152,12 @@ def check_makefile_re(project_path: str, binary_name: str):
 
 def check_makefile_fclean(project_path: str, binary_name: str):
     makefile_path = project_path + '/Makefile'
-    with open(os.path.dirname(os.path.realpath(__file__)) + "/.mymakefile", 'w+') as file:
+    with open(os.path.dirname(os.path.realpath(__file__)) + "/.mymakefile", 'a') as file:
         file.write("*------------------------------------------------------*\n")
         file.write("Checking rule: `fclean'\n")
         if 'fclean: ' not in open(makefile_path).read():
             file.write("-> Error: rule `fclean' not found in the Makefile.\n")
-        result = subprocess.run('make ' + '-C ' + project_path + ' fclean', shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8')
+        result = subprocess.run('make ' + '-C ' + project_path + ' fclean', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.decode('utf-8')
         file.write(result + '\n')
         if os.path.exists(project_path + '/' + binary_name):
             file.write("--> Error when processing rule `re': It should have removed the binary named {}\n".format(binary_name))
@@ -165,12 +169,12 @@ def check_makefile_fclean(project_path: str, binary_name: str):
 
 def check_makefile_name(project_path: str, binary_name: str):
     makefile_path = project_path + '/Makefile'
-    with open(os.path.dirname(os.path.realpath(__file__)) + "/.mymakefile", 'w+') as file:
+    with open(os.path.dirname(os.path.realpath(__file__)) + "/.mymakefile", 'a') as file:
         file.write("*------------------------------------------------------*\n")
         file.write("Checking rule: `$(NAME)'\n")
         if '$(NAME):' not in open(makefile_path).read():
             file.write("-> Error: rule `$(NAME)' not found in the Makefile.\n")
-        result = subprocess.run('make ' + '-C ' + project_path + ' ' + binary_name, shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8')
+        result = subprocess.run('make ' + '-C ' + project_path + ' ' + binary_name, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.decode('utf-8')
         file.write(result + '\n')
         if not os.path.exists(project_path + '/' + binary_name):
             file.write("--> Error when processing rule `re': It should have compiled a binary named {}\n".format(binary_name))
@@ -181,14 +185,14 @@ def check_makefile_name(project_path: str, binary_name: str):
 
 def check_makefile_phony(project_path: str, binary_name: str):
     makefile_path = project_path + '/Makefile'
-    with open(os.path.dirname(os.path.realpath(__file__)) + "/.mymakefile", 'w+') as file:
+    with open(os.path.dirname(os.path.realpath(__file__)) + "/.mymakefile", 'a') as file:
         file.write("*------------------------------------------------------*\n")
         file.write("Checking rule: `.PHONY'\n")
         if '.PHONY:' not in open(makefile_path).read():
             file.write("-> Error: rule `.PHONY' not found in the Makefile.\n")
         if not os.path.exists(project_path + '/' + binary_name):
             file.write("-> Error: Cannot test rule `re' because rule `$(NAME)' failed\n")
-        result = subprocess.run('make ' + '-C ' + project_path + ' .PHONY', shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8')
+        result = subprocess.run('make ' + '-C ' + project_path + ' .PHONY', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.decode('utf-8')
         file.write(result + '\n')
         if not os.path.exists(project_path + '/' + binary_name):
             file.write("--> Error when processing rule `.PHONY': It should not have cleaned the binary named {}\n".format(binary_name))
@@ -240,16 +244,17 @@ def check_42_commandements(project_path:str):
 
 def check_forbidden_functions(project_path: str, binary: str, authorized_functions):
     functions_called = []
-    result = subprocess.run(['nm', project_path + '/' + binary], stdout=subprocess.PIPE).stdout.decode('utf-8')
+    result = subprocess.run(['nm', project_path + '/' + binary], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.decode('utf-8')
     for line in result.splitlines():
-        if "U _" in line:
+        if "U " in line:
             functions_called.append(re.sub(' +', ' ', line))
-    sys_calls = {function.replace(' U _', '') for function in functions_called}
+    sys_calls = {function.replace(' U ', '') for function in functions_called}
     sys_calls = [item for item in sys_calls if not item.startswith("ft_")]
     extra_function_call = [item for item in sys_calls if item not in authorized_functions]
     with open(os.path.dirname(os.path.realpath(__file__)) + "/.myforbiddenfunctions", 'w+') as file:
         for item in extra_function_call:
-            file.write("You should justify the use of this function: `{}'\n".format(item))
+            if not item.startswith("__"):  #This is to ignore functions like `stack_chk_fail'
+                file.write("You should justify the use of this function: `{}'\n".format(item))
     return 0
 
 
@@ -265,8 +270,14 @@ def run_libftest(project_path: str):
     with open('libftest/my_config.sh', 'w') as file:
         file.write(filedata)
     # @todo Parse libftest output for UI and parse score for display and return values.
-    subprocess.run(['bash', "libftest/grademe.sh", "-s -f -n -u"])
+    result = subprocess.run(['bash', "libftest/grademe.sh", "-l -s -f -n -u"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.decode('utf-8')
     os.rename("deepthought", ".mylibftest")
+    with open(os.path.dirname(os.path.realpath(__file__)) + "/.mylibftest", 'a') as file:
+        file.write("\n\n\n\n\n\n\n\n\n*------------------------------------------------------*\n")
+        file.write("LIBFTEST\n")
+        file.write("Warning: This file contains escape sequences. Please use `cat' to view it properly.\n")
+        file.write("*------------------------------------------------------*\n")
+        file.write(result)
     return 0
 
 
@@ -301,12 +312,13 @@ def exec_moulitest(test_name: str):
         file.write("Warning: This file contains escape sequences. Please use `cat' to view it properly.\n")
         file.write("*------------------------------------------------------*\n")
         # @todo Get the result line of moulitest and parse it.
-        result = subprocess.run('make ' + test_name + ' -C ' + 'moulitest' + ' 2>&1', shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8')
+        result = subprocess.run('make ' + test_name + ' -C ' + 'moulitest', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.decode('utf-8')
         file.write(result + '\n')
 
 
 def run_moulitest(project_path: str, has_libft_bonuses: bool, project: str):
     available_projects = ['ft_ls', 'ft_printf', 'gnl', 'libft', 'libftasm']
+    #  Available projects checks if the given project corresponds to one the moulitest tests.
     if project not in available_projects:
         raise ValueError("given project not in moulitest available projects.")
     if project == "libft":
@@ -316,10 +328,10 @@ def run_moulitest(project_path: str, has_libft_bonuses: bool, project: str):
         # @todo Fix moulitest makefile (it starts the bonus even when not asked.)
         if not has_libft_bonuses:
             moulitest_exclude_libft_bonuses()
-            exec_moulitest("libft_bonus")
+            exec_moulitest("libft_part2")
             moulitest_include_libft_bonuses()
         else:
-            exec_moulitest("libft_bonus")
+            exec_moulitest("libft_part2")
     return 0
 
 
@@ -356,9 +368,9 @@ def run_maintest(project_path: str):
         file.write("MAINTEST\n")
         file.write("Warning: This file contains escape sequences. Please use `cat' to view it properly.\n")
         file.write("*------------------------------------------------------*\n")
-        result = subprocess.run(['gcc', 'libft_main.c', '-L' + project_path, '-I' + project_path, "-I" + project_path + "/include", "-I" + project_path + "/includes", "-lft", "-o", "libft_main.out"], stdout=subprocess.PIPE).stdout.decode('utf-8')
+        result = subprocess.run(['gcc', 'libft_main.c', '-L' + project_path, '-I' + project_path, "-I" + project_path + "/include", "-I" + project_path + "/includes", "-lft", "-o", "libft_main.out"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.decode('utf-8')
         file.write(result + '\n')
-        result = subprocess.run(['./libft_main.out'], stdout=subprocess.PIPE).stdout.decode('utf-8')
+        result = subprocess.run(['./libft_main.out'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.decode('utf-8')
         # @todo: Count number of OK and FAILs and yellow tests to get score for maintest
         file.write(result + '\n')
 
@@ -411,9 +423,11 @@ def check_libft(project_path: str):
     check_makefile(project_path, "libft.a")
     check_forbidden_functions(project_path, "libft.a", authorized_functions)
     run_libftest(project_path)
+
     run_moulitest(project_path, has_libft_bonuses, "libft")
     # @todo add libft-unit-test to the testing suite
     run_maintest(project_path)
     return 0
 
-sys.exit(run_maintest("/tmp/libft"))
+
+sys.exit(check_libft("/tmp/libft"))
