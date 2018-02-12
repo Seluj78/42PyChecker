@@ -3,7 +3,7 @@
     See full notice in `LICENSE'
 """
 
-import os
+import platform
 import subprocess
 import re
 
@@ -21,13 +21,20 @@ def check(project_path: str, binary: str, authorized_func, root_path: str):
     print("*---------------------------------------------------------------*")
     functions_called = []
     # @todo Check difference between Darwin and Linux `nm'
+    subprocess.run(['make', '-C', project_path, 'all'], stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT)
     result = subprocess.run(['nm', project_path + '/' + binary],
                             stdout=subprocess.PIPE,
                             stderr=subprocess.STDOUT).stdout.decode('utf-8')
     for line in result.splitlines():
         if "U " in line:
             functions_called.append(re.sub(' +', ' ', line))
-    sys_calls = {func.replace(' U ', '') for func in functions_called}
+    if platform.system() == "Darwin":
+        sys_calls = {func.replace(' U _', '') for func in functions_called}
+    elif platform.system() == "Linux":
+        sys_calls = {func.replace(' U ', '') for func in functions_called}
+    else:
+        sys_calls = ['Error']
     sys_calls = [item for item in sys_calls if not item.startswith("ft_")]
     extra_function_call = [item for item in sys_calls if item not in authorized_func]
     with open(root_path + "/.myforbiddenfunctions", 'w+') as file:
