@@ -3,7 +3,9 @@
 <!-- Need an image here -->
 
 ## We're actively looking for contributors !
+Shoot me an email at <<jlasne@student.42.fr>> or on slack (42Born2Code) `jlasne` !
 
+#### Uses
 The script is designed as a reminder:
 * author file terminated by a Line Feed
 * count and files name
