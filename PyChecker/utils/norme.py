@@ -40,9 +40,11 @@ def check(project_path: str, root_path: str):
             return 3
         else:
             file.write(result)
+            error_count = 0
+            warning_count = 0
             error_count = result.count('Error')
             warning_count = result.count('Warning')
-            if error_count != 0 and warning_count != 0:
+            if error_count != 0 or warning_count != 0:
                 print("Found {} errors and {} warnings".format(error_count,
                                                                warning_count))
                 return 2

@@ -6,6 +6,7 @@
 import os
 import subprocess
 import shutil
+import platform
 
 
 def run_libft(project_path: str, root_path: str):
@@ -64,5 +65,7 @@ def run_libft(project_path: str, root_path: str):
         # @todo: Count number of OK and FAILs and yellow tests to get score for maintest
         file.write(result + '\n')
         print(result)
+    if platform.system() == "Linux":
+        print("-- Disclaimer: Some of these test may fail where they woudn't on Darwin. (Because Linux ?)")
     os.remove("libft_main.c")
     os.remove("libft_main.out")
