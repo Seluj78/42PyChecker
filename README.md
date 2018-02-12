@@ -2,6 +2,8 @@
 
 <!-- Need an image here -->
 
+## We're actively looking for contributors !
+
 The script is designed as a reminder:
 * author file terminated by a Line Feed
 * count and files name
