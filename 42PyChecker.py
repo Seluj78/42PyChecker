@@ -37,6 +37,7 @@ def main():
     parser.add_argument("-p", "--path", help="The path of the project you want to test.", default="", type=str)
     parser.add_argument("--show-w", help="Displays the warranty warning from the license.", action="store_true")
     parser.add_argument("--show-c", help="Displays the conditions warning from the license.", action="store_true")
+    parser.add_argument("--no-tests", help="Disables all the testing suites for the project.", action="store_true")
     args = parser.parse_args()
     if args.show_w:
         print_header()
@@ -55,6 +56,10 @@ def main():
         with open(root_path + '/.github/LICENSE.lesser', 'r') as file:
             print(file.read())
         return
+    if args.no_tests:
+        args.no_libftest = True
+        args.no_maintest = True
+        args.no_moulitest = True
     if args.project is None:
         parser.error("You need to specify a project.")
     if args.path == "":

@@ -61,6 +61,9 @@ e.g.: `python3 ./42PyChecker.py --project=libft --path=/Users/admin/Projects/lib
 
 Disable a specific test.
 
+##### `--no-tests`
+This will disable all testing suites but run the other tests.
+
 #### `--show-c` and `--show-w`
 These options will display respectively the License and the Warranty.
 
