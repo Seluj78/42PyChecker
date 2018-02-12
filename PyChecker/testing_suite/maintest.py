@@ -4,9 +4,19 @@
 """
 
 import os
+import re
 import subprocess
-import shutil
 import platform
+
+
+def comment_define(source, destination, tokens):
+    with open(source, 'r') as src, open(destination, 'w+') as dst:
+        for line in src:
+            for token in tokens:
+                if re.match('#define\s+D_%s' % token.upper(), line):
+                    line = '//{}//{}'.format(line, next(src))
+                    break
+            dst.write(line)
 
 
 def run_libft(project_path: str, root_path: str):
@@ -35,39 +45,29 @@ def run_libft(project_path: str, root_path: str):
         if not os.path.exists(project_path + '/ft_' + file + '.c'):
             missing_functions.append(file)
     # @todo: special case for memalloc and memdel
-    missing = ""
-    for function in missing_functions:
-        missing = missing + '|D_' + function.upper()
-    missing = missing[1:]
-    # Has to be done, or else the last one is ignored. To be fixed !
-    missing = missing + "|D_NOTHING"
-    if missing == "":
-        shutil.copy("testing_suites/Maintest/libft/main.c", "libft_main.c")
-    else:
-        # @todo: Silence error from script maintest.
-        subprocess.run(['sh', 'scripts/remove_missing_functions_maintest.sh', missing])
+    comment_define(root_path + '/testing_suites/Maintest/libft/main.c', root_path + '/libft_main.c', missing_functions)
     with open(root_path + "/.mymaintest", 'w+') as file:
         file.write("*------------------------------------------------------*\n")
         file.write("MAINTEST\n")
         file.write("Warning: This file contains escape sequences. Please use "
                    "`cat' to view it properly.\n")
         file.write("*------------------------------------------------------*\n")
-        result = subprocess.run(['gcc', 'libft_main.c', '-L' + project_path,
+        result = subprocess.run(['gcc', root_path + '/libft_main.c', '-L' + project_path,
                                  '-I' + project_path, "-I" + project_path +
                                  "/include", "-I" + project_path + "/includes",
-                                 "-lft", "-o", "libft_main.out"],
+                                 "-lft", "-o", root_path + "/libft_main.out"],
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.STDOUT).stdout.decode('utf-8')
         file.write(result + '\n')
         print(result)
-        result = subprocess.run(['./libft_main.out'], stdout=subprocess.PIPE,
+        result = subprocess.run([root_path + '/libft_main.out'], stdout=subprocess.PIPE,
                                 stderr=subprocess.STDOUT).stdout.decode('utf-8')
         # @todo: Count number of OK and FAILs and yellow tests to get score for maintest
         file.write(result + '\n')
         print(result)
     if platform.system() == "Linux":
         print("-- Disclaimer: Some of these test may fail where they woudn't on Darwin. (Because Linux ?)")
-    os.remove("libft_main.c")
-    os.remove("libft_main.out")
+    os.remove(root_path + "/libft_main.c")
+    os.remove(root_path + "/libft_main.out")
     # @todo Check if FAIL is the right keyword.
     return result.count("OK"), result.count("FAIL")
