@@ -4,10 +4,9 @@
 """
 import os
 import argparse
+import platform
 from PyChecker.projects import libft, ft_commandements, other
 # @todo: Add verbose output
-# @todo: Add command line output when ran on --no-gui
-
 
 def print_header():
     print("\t42PyChecker  Copyright (C) 2018-present Jules Lasne "
@@ -86,4 +85,7 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    if not platform.system() == "Windows":
+        main()
+    else:
+        raise OSError("Sorry, this script can't be run on windows !")
