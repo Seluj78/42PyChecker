@@ -9,6 +9,7 @@ import subprocess
 
 
 def check_makefile_clean_dir(project_path: str, binary_name: str, root_path: str):
+    error_count = 0
     with open(root_path + "/.mymakefile", 'w+') as file:
         file.write("Cleaning Directory\n")
         print("Cleaning Directory")
@@ -24,14 +25,18 @@ def check_makefile_clean_dir(project_path: str, binary_name: str, root_path: str
                        " It should have removed {}\n".format(binary_name))
             print("-> Error when processing rule `fclean':"
                        " It should have removed {}".format(binary_name))
+            error_count += 1
         if glob.glob(project_path + '*.o'):
             file.write("-> Error when processing rule `fclean':"
                        " It should have removed *.o\n")
             print("-> Error when processing rule `fclean':"
                        " It should have removed *.o")
+            error_count += 1
+    return error_count
 
 
 def check_makefile_all(project_path: str, binary_name: str, root_path: str):
+    error_count = 0
     makefile_path = project_path + '/Makefile'
     with open(root_path + "/.mymakefile", 'a') as file:
         file.write("*------------------------------------------------------*\n")
@@ -40,9 +45,13 @@ def check_makefile_all(project_path: str, binary_name: str, root_path: str):
         if 'all: ' not in open(makefile_path).read():
             file.write("-> Error: rule `all' not found in the Makefile.\n")
             print("-> Error: rule `all' not found in the Makefile.")
+            error_count += 1
+            return error_count
         if 'all: $(NAME)' not in open(makefile_path).read():
             file.write("-> Error: rule `all' should call the rule `$(NAME)'\n")
             print("-> Error: rule `all' should call the rule `$(NAME)'")
+            error_count += 1
+            return error_count
         result = subprocess.run('make ' + '-C ' + project_path + ' all',
                                 shell=True, stdout=subprocess.PIPE,
                                 stderr=subprocess.STDOUT).stdout.decode('utf-8')
@@ -53,15 +62,19 @@ def check_makefile_all(project_path: str, binary_name: str, root_path: str):
                        " It should have created {}\n".format(binary_name))
             print("-> Error when processing rule `all':"
                        " It should have created {}".format(binary_name))
+            error_count += 1
         if not glob.glob(project_path + '/*.o'):
             file.write("-> Error when processing rule `all':"
                        " It should NOT have removed *.o\n")
             print("-> Error when processing rule `all':"
                        " It should NOT have removed *.o")
+            error_count += 1
         # @todo  [ -z "$(echo ${MAKEALLTWICE} | grep -i "Nothing to be done")" -a -z "$(echo ${MAKEALLTWICE} | grep -i "is up to date")" ] && printf "%s\n" "-> Failing rule: Processing the rule 'all' twice in a row should result in nothing to be done" && RET=1
+    return error_count
 
 
 def check_makefile_clean(project_path: str, binary_name: str, root_path: str):
+    error_count = 0
     makefile_path = project_path + '/Makefile'
     with open(root_path + "/.mymakefile", 'a') as file:
         file.write("*------------------------------------------------------*\n")
@@ -70,12 +83,15 @@ def check_makefile_clean(project_path: str, binary_name: str, root_path: str):
         if 'clean: ' not in open(makefile_path).read():
             file.write("-> Error: rule `clean' not found in the Makefile.\n")
             print("-> Error: rule `clean' not found in the Makefile.")
+            error_count += 1
+            return error_count
         if not os.path.exists(project_path + '/' + binary_name):
             file.write("-> Error: Cannot test rule `clean' because rule"
                        " `all' failed\n")
             print("-> Error: Cannot test rule `clean' because rule"
                        " `all' failed")
-            # @todo Stop the makefile test here
+            error_count += 1
+            return error_count
         result = subprocess.run('make ' + '-C ' + project_path + ' clean',
                                 shell=True, stdout=subprocess.PIPE,
                                 stderr=subprocess.STDOUT).stdout.decode('utf-8')
@@ -86,12 +102,16 @@ def check_makefile_clean(project_path: str, binary_name: str, root_path: str):
                        "cleaned the binary named {}.\n".format(binary_name))
             print("-> Error: Failing Rule: It should not have "
                        "cleaned the binary named {}.".format(binary_name))
+            error_count += 1
         if glob.glob(project_path + '/*.o'):
             file.write("-> Error: Failing Rule: It should have cleaned the *.o\n")
             print("-> Error: Failing Rule: It should have cleaned the *.o")
+            error_count += 1
+    return error_count
 
 
 def check_makefile_re(project_path: str, binary_name: str, root_path: str):
+    error_count = 0
     makefile_path = project_path + '/Makefile'
     with open(root_path + "/.mymakefile", 'a') as file:
         file.write("*------------------------------------------------------*\n")
@@ -100,11 +120,15 @@ def check_makefile_re(project_path: str, binary_name: str, root_path: str):
         if 're: ' not in open(makefile_path).read():
             file.write("-> Error: rule `re' not found in the Makefile.\n")
             print("-> Error: rule `re' not found in the Makefile.")
+            error_count += 1
+            return error_count
         if not os.path.exists(project_path + '/' + binary_name):
             file.write("-> Error: Cannot test rule `re' because rule "
                        "`all' failed\n")
             print("-> Error: Cannot test rule `re' because rule "
                        "`all' failed")
+            error_count += 1
+            return error_count
         inode1 = os.stat(project_path + '/' + binary_name).st_ino
         file.write("-- Before running rule `re', the {} inode is {}\n".format(binary_name, inode1))
         print("-- Before running rule `re', the {} inode is {}".format(binary_name, inode1))
@@ -121,19 +145,24 @@ def check_makefile_re(project_path: str, binary_name: str, root_path: str):
                        " have built the object file `*.o'\n")
             print("-> Error when processing rule `re': It should"
                        " have built the object file `*.o'")
+            error_count += 1
         if not os.path.exists(project_path + '/' + binary_name):
             file.write("--> Error when processing rule `re': It should"
                        " have compiled a binary named {}\n".format(binary_name))
             print("--> Error when processing rule `re': It should"
                        " have compiled a binary named {}".format(binary_name))
+            error_count += 1
         if inode1 == inode2:
             file.write("-> Failing rule `re': It should have compiled"
                        " again the binary named {} (inode unchanged)\n".format(binary_name))
             print("-> Failing rule `re': It should have compiled"
                        " again the binary named {} (inode unchanged)".format(binary_name))
+            error_count += 1
+    return error_count
 
 
 def check_makefile_fclean(project_path: str, binary_name: str, root_path: str):
+    error_count = 0
     makefile_path = project_path + '/Makefile'
     with open(root_path + "/.mymakefile", 'a') as file:
         file.write("*------------------------------------------------------*\n")
@@ -142,6 +171,8 @@ def check_makefile_fclean(project_path: str, binary_name: str, root_path: str):
         if 'fclean: ' not in open(makefile_path).read():
             file.write("-> Error: rule `fclean' not found in the Makefile.\n")
             print("-> Error: rule `fclean' not found in the Makefile.")
+            error_count += 1
+            return error_count
         result = subprocess.run('make ' + '-C ' + project_path + ' fclean',
                                 shell=True, stdout=subprocess.PIPE,
                                 stderr=subprocess.STDOUT).stdout.decode('utf-8')
@@ -152,15 +183,20 @@ def check_makefile_fclean(project_path: str, binary_name: str, root_path: str):
                        " have removed the binary named {}\n".format(binary_name))
             print("--> Error when processing rule `re': It should"
                        " have removed the binary named {}".format(binary_name))
+            error_count += 1
         if glob.glob(project_path + '/*.o'):
             file.write("-> Error: Failing Rule: It should have cleaned the *.o\n")
             print("-> Error: Failing Rule: It should have cleaned the *.o")
+            error_count += 1
         if glob.glob(project_path + '/*.a'):
             file.write("-> Error: Failing Rule: It should have cleaned the *.a\n")
             print("-> Error: Failing Rule: It should have cleaned the *.a")
+            error_count += 1
+    return error_count
 
 
 def check_makefile_name(project_path: str, binary_name: str, root_path: str):
+    error_count = 0
     makefile_path = project_path + '/Makefile'
     with open(root_path + "/.mymakefile", 'a') as file:
         file.write("*------------------------------------------------------*\n")
@@ -169,6 +205,8 @@ def check_makefile_name(project_path: str, binary_name: str, root_path: str):
         if '$(NAME):' not in open(makefile_path).read():
             file.write("-> Error: rule `$(NAME)' not found in the Makefile.\n")
             print("-> Error: rule `$(NAME)' not found in the Makefile.")
+            error_count += 1
+            return error_count
         result = subprocess.run('make ' + '-C ' + project_path + ' ' + binary_name,
                                 shell=True, stdout=subprocess.PIPE,
                                 stderr=subprocess.STDOUT).stdout.decode('utf-8')
@@ -179,15 +217,19 @@ def check_makefile_name(project_path: str, binary_name: str, root_path: str):
                        " have compiled a binary named {}\n".format(binary_name))
             print("--> Error when processing rule `re': It should"
                        " have compiled a binary named {}".format(binary_name))
+            error_count += 1
         if not glob.glob(project_path + '/*.o'):
             file.write("-> Error when processing rule `fclean': It should"
                        " NOT have removed *.o\n")
             print("-> Error when processing rule `fclean': It should"
                        " NOT have removed *.o\n")
+            error_count += 1
         # @todo  [ -z "$(echo ${MAKEALLTWICE} | grep -i "Nothing to be done")" -a -z "$(echo ${MAKEALLTWICE} | grep -i "is up to date")" ] && printf "%s\n" "-> Failing rule: Processing the rule 'all' twice in a row should result in nothing to be done" && RET=1
+    return error_count
 
 
 def check_makefile_phony(project_path: str, binary_name: str, root_path: str):
+    error_count = 0
     makefile_path = project_path + '/Makefile'
     with open(root_path + "/.mymakefile", 'a') as file:
         file.write("*------------------------------------------------------*\n")
@@ -196,11 +238,15 @@ def check_makefile_phony(project_path: str, binary_name: str, root_path: str):
         if '.PHONY:' not in open(makefile_path).read():
             file.write("-> Error: rule `.PHONY' not found in the Makefile.\n")
             print("-> Error: rule `.PHONY' not found in the Makefile.")
+            error_count += 1
+            return error_count
         if not os.path.exists(project_path + '/' + binary_name):
-            file.write("-> Error: Cannot test rule `re' because rule "
+            file.write("-> Error: Cannot test rule `.PHONY' because rule "
                        "`$(NAME)' failed\n")
-            print("-> Error: Cannot test rule `re' because rule "
+            print("-> Error: Cannot test rule `.PHONY' because rule "
                        "`$(NAME)' failed")
+            error_count += 1
+            return error_count
         result = subprocess.run('make ' + '-C ' + project_path + ' .PHONY',
                                 shell=True, stdout=subprocess.PIPE,
                                 stderr=subprocess.STDOUT).stdout.decode('utf-8')
@@ -211,9 +257,12 @@ def check_makefile_phony(project_path: str, binary_name: str, root_path: str):
                        " not have cleaned the binary named {}\n".format(binary_name))
             print("--> Error when processing rule `.PHONY': It should"
                        " not have cleaned the binary named {}\n".format(binary_name))
+            error_count += 1
         if glob.glob(project_path + '/*.o'):
             file.write("-> Error: Failing Rule: It should have cleaned the *.o\n")
             print("-> Error: Failing Rule: It should have cleaned the *.o")
+            error_count += 1
+    return error_count
 
 
 def check(project_path: str, binary_name: str, root_path: str):
@@ -232,12 +281,15 @@ def check(project_path: str, binary_name: str, root_path: str):
     if not os.path.exists(makefile_path):
         print("--> Error: Makefile not found.")
         return 1
-    # @todo Add an error counter
-    check_makefile_clean_dir(project_path, binary_name, root_path)
-    check_makefile_all(project_path, binary_name, root_path)
-    check_makefile_clean(project_path, binary_name, root_path)
-    check_makefile_re(project_path, binary_name, root_path)
-    check_makefile_fclean(project_path, binary_name, root_path)
-    check_makefile_name(project_path, binary_name, root_path)
-    check_makefile_phony(project_path, binary_name, root_path)
+    error_count = 0
+    error_count += check_makefile_clean_dir(project_path, binary_name, root_path)
+    error_count += check_makefile_all(project_path, binary_name, root_path)
+    error_count += check_makefile_clean(project_path, binary_name, root_path)
+    error_count += check_makefile_re(project_path, binary_name, root_path)
+    error_count += check_makefile_fclean(project_path, binary_name, root_path)
+    error_count += check_makefile_name(project_path, binary_name, root_path)
+    error_count += check_makefile_phony(project_path, binary_name, root_path)
+    print("\n\n\t\tFound {} errors on your makefile".format(error_count))
+    with open(root_path + "/.mymakefile", 'a') as file:
+        file.write("\n\n\t\tFound {} errors on your makefile\n".format(error_count))
     return 0
