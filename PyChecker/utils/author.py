@@ -31,21 +31,21 @@ def check(project_path: str):
         author = "us"
     else:
         print("--> Error: Author file not found")
-        return 1
+        return "--> Error: Author file not found"
     if count != 1:
         print("--> Error: Too many lines in author file (Or the file is empty)")
-        return 2
+        return "--> Error: Too many lines in author file (Or the file is empty)"
     if author == "fr":
         with open(author_fr, 'r') as file:
             content = file.read()
             if "\n" not in content:
                 print("--> Error: Missing <newline> character at the end of line")
-                return 3
+                return "--> Error: Missing <newline> character at the end of line"
     elif author == "us":
         with open(author_us, 'r') as file:
             content = file.read()
             if "\n" not in content:
                 print("--> Error: Missing <newline> character at the end of line")
-                return 3
+                return "--> Error: Missing <newline> character at the end of line"
     print("-- NTR (Nothing to Report)")
-    return 0
+    return "-- NTR (Nothing to Report)"

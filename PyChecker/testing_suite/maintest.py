@@ -69,3 +69,5 @@ def run_libft(project_path: str, root_path: str):
         print("-- Disclaimer: Some of these test may fail where they woudn't on Darwin. (Because Linux ?)")
     os.remove("libft_main.c")
     os.remove("libft_main.out")
+    # @todo Check if FAIL is the right keyword.
+    return result.count("OK"), result.count("FAIL")

@@ -7,23 +7,25 @@ import glob
 from PyChecker.utils import author, forbidden_functions, makefile, norme, static
 from PyChecker.testing_suite import maintest, moulitest, libftest
 
-
-def check_bonuses(project_path: str, required_functions, bonus_functions):
-    has_libft_bonuses = True
+def check_required(project_path: str, required_functions):
     while True:
         if all([os.path.isfile(project_path + '/' + function) for function in required_functions]):
             break
         else:
-            print("ERROR: not all required files are here")
-            break
+            print("--> ERROR: not all required files are here")
+            return "--> ERROR: not all required files are here"
+    return "-- All required functions are present."
+
+def check_bonuses(project_path: str, bonus_functions):
+    has_libft_bonuses = True
     while True:
         if all([os.path.isfile(project_path + '/' + function) for function in bonus_functions]):
             break
         else:
             has_libft_bonuses = False
-            print("Warning: not all bonus files are here")
-            break
-    return has_libft_bonuses
+            print("--> Warning: not all bonus files are here")
+            return has_libft_bonuses, "--> Warning: not all bonus files are here"
+    return has_libft_bonuses, "-- All bonuses files were found."
 
 
 def count_extras(project_path: str, required_functions, bonus_functions):
@@ -62,25 +64,51 @@ def check(root_path: str, args):
     bonus_functions = ['ft_lstnew.c', 'ft_lstdelone.c', 'ft_lstdel.c',
                        'ft_lstiter.c', 'ft_lstadd.c', 'ft_lstmap.c']
     authorized_functions = ['free', 'malloc', 'write', 'main']
+    # @todo add libft-unit-test to the testing suite
+    if not args.no_author:
+        author_results = author.check(args.path)
+    if not args.no_required:
+        required_results = check_required(args.path, required_functions)
+    has_libft_bonuses, bonus_result = check_bonuses(args.path, bonus_functions)
+    if not args.no_extra:
+        extra_functions = count_extras(args.path, required_functions, bonus_functions)
+    if not args.no_norm:
+        norm_results = norme.check(args.path, root_path)
+    if not args.no_static:
+        static_results = static.check(root_path, args)
+    if not args.no_makefile:
+        makefile_results = makefile.check(args.path, "libft.a", root_path)
+    if not args.no_forbidden_functions:
+        forbidden_functions_results = forbidden_functions.check(args.path, "libft.a", authorized_functions, root_path)
+    if not args.no_moulitest:
+        moulitest_results = moulitest.run(args.path, has_libft_bonuses, "libft", root_path)
+    if not args.no_libftest:
+        libftest_results = libftest.run(args.path, root_path)
+    if not args.no_maintest:
+        maintest_ok, maintest_fail = maintest.run_libft(args.path, root_path)
+    print("\n\n\nThe results are in:\n")
+    if not args.no_author:
+        print("Author File: \n" + author_results + '\n')
+    if not args.no_required:
+        print("Required Functions: \n" + required_results + '\n')
+    print("Bonus Functions: \n" + bonus_result + '\n')
     if not args.no_extra:
         # @todo Stats on all c/h files of project, like with `cloc' ?
-        count_extras(args.path, required_functions, bonus_functions)
-    if not args.no_author:
-        author.check(args.path)
+        print("Extra Functions: -- You have {}\n".format(len(extra_functions)))
     if not args.no_norm:
-        norme.check(args.path, root_path)
+        print("Norme results: \n" + norm_results + '\n')
     if not args.no_static:
-        static.check(root_path, args)
+        print("Static Functions:\n" + static_results)
     if not args.no_makefile:
-        makefile.check(args.path, "libft.a", root_path)
+        print("Makefile: \n" + makefile_results + '\n')
     if not args.no_forbidden_functions:
-        forbidden_functions.check(args.path, "libft.a", authorized_functions, root_path)
-    if not args.no_libftest:
-        libftest.run(args.path, root_path)
+        print("Forbidden Functions: \n" + forbidden_functions_results)
     if not args.no_moulitest:
-        has_libft_bonuses = check_bonuses(args.path, required_functions, bonus_functions)
-        moulitest.run(args.path, has_libft_bonuses, "libft", root_path)
+        print("Moulitest: \n" + moulitest_results + '\n')
+    if not args.no_libftest:
+        print("Libftest: \nLibft Part One: " + libftest_results[0])
+        print("Libft Part two: " + libftest_results[1])
+        print("Libft Bonuses: " + libftest_results[2] + '\n')
     if not args.no_maintest:
-        maintest.run_libft(args.path, root_path)
-    # @todo add libft-unit-test to the testing suite
+        print("Maintest: \n{} OKs and {} FAILs.".format(maintest_ok, maintest_fail))
     return 0

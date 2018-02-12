@@ -19,6 +19,7 @@ def check(project_path: str, binary: str, authorized_func, root_path: str):
     print("*---------------------------------------------------------------*")
     print("*----------------------Forbidden functions:---------------------*")
     print("*---------------------------------------------------------------*")
+    ret = ""
     functions_called = []
     # @todo Check difference between Darwin and Linux `nm'
     subprocess.run(['make', '-C', project_path, 'all'], stdout=subprocess.PIPE,
@@ -43,4 +44,5 @@ def check(project_path: str, binary: str, authorized_func, root_path: str):
             if not item.startswith("__"):
                 file.write("You should justify the use of this function: `{}'\n".format(item))
                 print("You should justify the use of this function: `{}'".format(item))
-    return 0
+                ret += "You should justify the use of this function: `{}'\n".format(item)
+    return ret

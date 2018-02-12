@@ -15,3 +15,4 @@ def check(root_path: str, args):
         file.write(result)
     # @todo Fix error message from script.
     print(result)
+    return result

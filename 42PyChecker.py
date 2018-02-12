@@ -8,6 +8,7 @@ import platform
 from PyChecker.projects import libft, ft_commandements, other
 # @todo: Add verbose output
 
+
 def print_header():
     print("\t42PyChecker  Copyright (C) 2018-present Jules Lasne "
           "<jules.lasne@gmail.com>\n\tThis program comes with"
@@ -37,6 +38,8 @@ def main():
     parser.add_argument("--show-w", help="Displays the warranty warning from the license.", action="store_true")
     parser.add_argument("--show-c", help="Displays the conditions warning from the license.", action="store_true")
     parser.add_argument("--no-tests", help="Disables all the testing suites for the project.", action="store_true")
+    # @todo Check what option is given based on the selected project.
+    parser.add_argument("--no-required", help="Disables required functions check", action="store_true")
     args = parser.parse_args()
     if args.show_w:
         print_header()

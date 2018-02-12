@@ -45,7 +45,12 @@ def execute_test(test_name: str, root_path: str):
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.STDOUT).stdout.decode('utf-8')
         file.write(result + '\n')
-    print(result)
+        print(result)
+    with open(root_path + "/.mymoulitest", 'r') as file:
+        for line in file:
+            if "283" in line:
+                line = line[12:-13]
+                return line
 
 
 def run(project_path: str, has_libft_bonuses: bool, project: str, root_path: str):
@@ -63,8 +68,8 @@ def run(project_path: str, has_libft_bonuses: bool, project: str, root_path: str
         # @todo Fix moulitest makefile (it starts the bonus even when not asked.)
         if not has_libft_bonuses:
             exclude_libft_bonuses()
-            execute_test("libft_bonus", root_path)
+            results = execute_test("libft_bonus", root_path)
             include_libft_bonuses()
         else:
-            execute_test("libft_bonus", root_path)
-    return 0
+            results = execute_test("libft_bonus", root_path)
+    return results

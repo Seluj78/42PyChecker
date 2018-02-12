@@ -41,4 +41,11 @@ def run(project_path: str, root_path: str):
         file.write("*------------------------------------------------------*\n")
         file.write(result)
     print(result)
-    return 0
+    with open(root_path + "/.mylibftest", 'r') as file:
+        res = ""
+        for line in file:
+            if "Total : " in line:
+                res += line
+    totals = []
+    totals = res.split('\n')
+    return totals

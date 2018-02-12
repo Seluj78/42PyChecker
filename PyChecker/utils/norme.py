@@ -27,8 +27,8 @@ def check(project_path: str, root_path: str):
     for filename in glob.iglob(project_path + '/**/*.h', recursive=True):
         files = files + ' ' + filename
     if files == "":
-        print("No source file (.c) or header (.h) to check")
-        return 1
+        print("-- No source file (.c) or header (.h) to check")
+        return "-- No source file (.c) or header (.h) to check"
     with open(root_path + "/.mynorme", 'w+') as file:
         try:
             result = subprocess.run(['norminette'] + files.split(),
@@ -37,7 +37,7 @@ def check(project_path: str, root_path: str):
         except FileNotFoundError:
             file.write("Error: Norminette not found.\n")
             print("--> Error: `norminette': command not found.")
-            return 3
+            return "--> Error: `norminette': command not found."
         else:
             file.write(result)
             error_count = 0
@@ -45,8 +45,9 @@ def check(project_path: str, root_path: str):
             error_count = result.count('Error')
             warning_count = result.count('Warning')
             if error_count != 0 or warning_count != 0:
-                print("Found {} errors and {} warnings".format(error_count,
+                print("--> Found {} errors and {} warnings".format(error_count,
                                                                warning_count))
-                return 2
+                return "--> Found {} errors and {} warnings".format(error_count,
+                                                               warning_count)
     print("-- NTR (Nothing to Report)")
-    return 0
+    return "-- NTR (Nothing to Report)"
