@@ -6,6 +6,7 @@ import os
 import glob
 from PyChecker.utils import author, forbidden_functions, makefile, norme, static
 from PyChecker.testing_suite import maintest, moulitest, libftest
+from PyChecker.testing_suite import libft_unit_test
 
 def check_required(project_path: str, required_functions):
     while True:
@@ -86,6 +87,8 @@ def check(root_path: str, args):
         libftest_results = libftest.run(args.path, root_path)
     if not args.no_maintest:
         maintest_ok, maintest_fail = maintest.run_libft(args.path, root_path)
+    if not args.no_libft_unit_test:
+        libft_unit_test.run(root_path, args)
     print("\n\n\nThe results are in:\n")
     if not args.no_author:
         print("Author File: \n" + author_results + '\n')

@@ -7,3 +7,6 @@
 [submodule "moulitest"]
 	path = testing_suites/moulitest
 	url = https://github.com/yyang42/moulitest
+[submodule "libft-unit-test"]
+	path = testing_suites/libft-unit-test
+	url = https://github.com/alelievr/libft-unit-test.git

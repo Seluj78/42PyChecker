@@ -40,6 +40,9 @@ def main():
     parser.add_argument("--no-tests", help="Disables all the testing suites for the project.", action="store_true")
     # @todo Check what option is given based on the selected project.
     parser.add_argument("--no-required", help="Disables required functions check", action="store_true")
+    parser.add_argument("--no-libft-unit-test", help="Disables libft-unit-test", action="store_true")
+    parser.add_argument("--no-benchmark", help="Disables libft-unit-test benchmarking", action="store_false")
+
     args = parser.parse_args()
     if args.show_w:
         print_header()
