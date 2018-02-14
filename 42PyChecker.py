@@ -6,7 +6,7 @@ import os
 import argparse
 import platform
 from PyChecker.projects import libft, ft_commandements, other
-# @todo: Add verbose output
+# @todo Add verbose output
 
 
 def print_header():
@@ -82,10 +82,10 @@ def main():
     print_header()
     if args.project == "libft":
         libft.check(root_path, args)
-    # @todo: Handle options for 42commandements: No option can be passed (like --no-norm)
+    # @todo Handle options for 42commandements: No option can be passed (like --no-norm)
     if args.project == "42commandements":
         ft_commandements.check(args)
-    # @todo: Handle options for other: No option can be passed (like --no-norm)
+    # @todo Handle options for other: No option can be passed (like --no-norm)
     if args.project == "other":
         other.check(root_path, args)
 

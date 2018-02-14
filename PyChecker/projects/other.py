@@ -10,6 +10,6 @@ def check(root_path: str, args):
         author.check(args.path)
     if not args.no_norm:
         norme.check(args.path, root_path)
-    # @todo: Add the makefile check and find the binary name itself
-    # @todo: Add forbidden function check based on assumption of what the project is.
+    # @todo Add the makefile check and find the binary name itself
+    # @todo Add forbidden function check based on assumption of what the project is.
     return 0
