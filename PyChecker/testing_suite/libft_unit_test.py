@@ -7,9 +7,12 @@ import platform
 import subprocess
 import os
 import io
+from PyChecker.utils import git
 
 
 def run(root_path: str, args):
+
+
     print("*---------------------------------------------------------------*")
     print("*------------------------libft-unit-test------------------------*")
     print("*---------------------------------------------------------------*")
@@ -19,6 +22,11 @@ def run(root_path: str, args):
         with open(root_path + '/.mylibftunittest', 'w+') as file:
             file.write("Sorry, this testing suite can only be ran on Darwin computers (MacOS)\n")
         return "Sorry, this testing suite can only be ran on Darwin computers (MacOS)"
+
+    if "fatal: Not a git repository" in git.status(root_path + '/testing_suites/libft-unit-test'):
+        git.clone("https://github.com/alelievr/libft-unit-test.git", root_path + '/testing_suites/libft-unit-test')
+    else:
+        git.reset(root_path + '/testing_suites/libft-unit-test')
 
     with open(root_path + '/.mylibftunittest', 'w+') as file:
         result = subprocess.run(['make', 're', '-C', root_path + '/testing_suites/libft-unit-test', 'LIBFTDIR=' + args.path], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.decode('utf-8')

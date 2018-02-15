@@ -4,7 +4,7 @@
 """
 
 import subprocess
-
+from PyChecker.utils import git
 
 def run(root_path: str, project_path: str):
     """
@@ -15,6 +15,11 @@ def run(root_path: str, project_path: str):
     print("*---------------------------------------------------------------*")
     print("*-------------------------fillit_checker------------------------*")
     print("*---------------------------------------------------------------*")
+
+    if "fatal: Not a git repository" in git.status(root_path + '/testing_suites/fillit_checker'):
+        git.clone("https://github.com/anisg/fillit_checker", root_path + '/testing_suites/fillit_checker')
+    else:
+        git.reset(root_path + '/testing_suites/fillit_checker')
 
     # @todo: Find a way to supress colors from output
     result = subprocess.run(['bash', root_path + "/testing_suites/fillit_checker/test.sh", project_path], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.decode('utf-8')

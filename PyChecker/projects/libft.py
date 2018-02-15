@@ -118,11 +118,11 @@ def check(root_path: str, args):
         print("Libft Part two: " + libftest_results[1])
         print("Libft Bonuses: " + libftest_results[2] + '\n')
     if not args.no_maintest:
-        print("Maintest: \n{} OKs and {} FAILs.".format(maintest_ok, maintest_fail))
+        print("Maintest: \n{} OKs and {} FAILs.".format(maintest_ok, maintest_fail) + '\n')
     if not args.no_libft_unit_test:
         if args.do_benchmark:
             # @todo: Strip useless chars from benchmark results
-            print('libft-unit-test: \n' + libft_unit_test_results + '\n\n' + benchmark_results)
+            print('libft-unit-test: \n' + libft_unit_test_results + '\n\n' + benchmark_results + '\n')
         else:
-            print('libft-unit-test: \n' + libft_unit_test_results)
+            print('libft-unit-test: \n' + libft_unit_test_results + '\n')
     return 0

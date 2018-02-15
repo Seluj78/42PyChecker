@@ -104,3 +104,4 @@ ENV/
 libft_main.c
 libft_main.out
 deepthought
+testing_suites

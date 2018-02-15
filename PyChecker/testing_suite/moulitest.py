@@ -5,6 +5,8 @@
 
 import os
 import subprocess
+from PyChecker.utils import git
+
 
 def include_libft_bonuses(root_path: str):
     """
@@ -59,11 +61,16 @@ def execute_test(test_name: str, root_path: str):
 
 
 def run(project_path: str, has_libft_bonuses: bool, project: str, root_path: str):
+
+    if "fatal: Not a git repository" in git.status(root_path + '/testing_suites/moulitest'):
+        git.clone("https://github.com/yyang42/moulitest.git", root_path + '/testing_suites/moulitest')
+    else:
+        git.reset(root_path + '/testing_suites/moulitest')
+
     print("*---------------------------------------------------------------*")
     print("*--------------------------Moulitest----------------------------*")
     print("*---------------------------------------------------------------*")
     available_projects = ['ft_ls', 'ft_printf', 'gnl', 'libft', 'libftasm']
-
     #  Available projects checks if the given project corresponds to one the moulitest tests.
     if project not in available_projects:
         raise ValueError("given project not in moulitest available projects.")

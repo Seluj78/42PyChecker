@@ -7,7 +7,7 @@ import os
 import re
 import subprocess
 import platform
-
+from PyChecker.utils import git
 
 def comment_define(source, destination, tokens):
     """
@@ -32,6 +32,12 @@ def run_libft(project_path: str, root_path: str):
 
     :param project_path: The path of the project you want to test.
     """
+
+    if "fatal: Not a git repository" in git.status(root_path + '/testing_suites/Maintest'):
+        git.clone("https://github.com/QuentinPerez/Maintest.git", root_path + '/testing_suites/Maintest')
+    else:
+        git.reset(root_path + '/testing_suites/Maintest')
+
     print("*---------------------------------------------------------------*")
     print("*----------------------------Maintest---------------------------*")
     print("*---------------------------------------------------------------*")

@@ -179,6 +179,10 @@ def main():
 
     check_args_rules(parser, args)
 
+    # Here we create the directory where the testing suites will be cloned
+    if not os.path.exists(root_path + '/testing_suites'):
+        os.makedirs(root_path + '/testing_suites')
+
     # Here we select the project and start the check based on the argument `--project`
     if args.project == "libft":
         libft.check(root_path, args)

@@ -5,7 +5,7 @@
 
 import os
 import subprocess
-
+from PyChecker.utils import git
 
 def replace_my_config(root_path: str, project_path: str):
     with open(root_path + "/testing_suites/libftest/my_config.sh", 'w+') as file:
@@ -28,6 +28,12 @@ def run(project_path: str, root_path: str):
 
     :param project_path: The path of the project you want to test.
     """
+
+    if "fatal: Not a git repository" in git.status(root_path + '/testing_suites/libftest'):
+        git.clone("https://github.com/jtoty/libftest.git", root_path + '/testing_suites/libftest')
+    else:
+        git.reset(root_path + '/testing_suites/libftest')
+
     print("*---------------------------------------------------------------*")
     print("*----------------------------Libftest---------------------------*")
     print("*---------------------------------------------------------------*")
