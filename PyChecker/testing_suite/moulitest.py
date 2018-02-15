@@ -32,7 +32,9 @@ def exclude_libft_bonuses(root_path: str):
 
 
 def execute_test(test_name: str, root_path: str):
-    # @todo add a protection if test_name isn't compatible with the current project and if not in list of available test for moulitest
+    available_tests = ['libft_part1', 'libft_part2', 'libft_bonus', 'get_next_line', 'gnl', 'ft_ls', 'ft_printf']
+    if test_name not in available_tests:
+        raise ValueError("Given test not in moulitest available tests.")
     with open(root_path + "/.mymoulitest", 'w+') as file:
         file.write("*------------------------------------------------------*\n")
         file.write("MOULITEST\n")
