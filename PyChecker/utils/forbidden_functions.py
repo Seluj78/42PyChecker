@@ -8,7 +8,7 @@ import subprocess
 import re
 
 
-def check(project_path: str, binary: str, authorized_func, root_path: str):
+def check(project_path: str, authorized_func, root_path: str):
     """
     This function will check the functions used by the given binary in the given project.
 
@@ -16,6 +16,9 @@ def check(project_path: str, binary: str, authorized_func, root_path: str):
     :param binary_name: The binary that you want to analyze
     :param authorized_func: The functions authorized by the project.
     """
+    with open(project_path + '/Makefile', 'r') as file:
+        data = file.read()
+        binary = re.findall("NAME[\s]*=[\s]*(.*)", data)[0]
     print("*---------------------------------------------------------------*")
     print("*----------------------Forbidden functions:---------------------*")
     print("*---------------------------------------------------------------*")

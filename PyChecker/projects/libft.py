@@ -78,9 +78,9 @@ def check(root_path: str, args):
     if not args.no_static:
         static_results = static.check(root_path, args)
     if not args.no_makefile:
-        makefile_results = makefile.check(args.path, "libft.a", root_path)
+        makefile_results = makefile.check(args.path, root_path)
     if not args.no_forbidden_functions:
-        forbidden_functions_results = forbidden_functions.check(args.path, "libft.a", authorized_functions, root_path)
+        forbidden_functions_results = forbidden_functions.check(args.path, authorized_functions, root_path)
     if not args.no_moulitest:
         moulitest_results = moulitest.run(args.path, has_libft_bonuses, "libft", root_path)
     if not args.no_libftest:
