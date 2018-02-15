@@ -192,7 +192,10 @@ def main():
 
 if __name__ == '__main__':
     if not platform.system() == "Windows":
-        print_header()
-        main()
+        try:
+            print_header()
+            main()
+        except KeyboardInterrupt:
+            sys.exit(1)
     else:
         raise OSError("Sorry, this script can't be run on windows !")
