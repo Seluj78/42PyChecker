@@ -59,12 +59,15 @@ This option has no effect when used without the option `--project`.
 Specify the absolute path of directory of your project.  
 e.g.: `python3 ./42PyChecker.py --project=libft --path=/Users/admin/Projects/libft/`.
 
-##### `--no-author`, `--no-norm`, `--no-makefile`, `--no-forbidden-functions`, `--no-static`, `--no-moulitest`, `--no-maintest`, `--no-libftest`, `--no-extra`
+##### `--no-author`, `--no-norm`, `--no-makefile`, `--no-forbidden-functions`, `--no-static`, `--no-moulitest`, `--no-maintest`, `--no-libftest`, `--no-extra` `--no-required`, `--no-libft-unit-test`, `--no-fillit-checker`, `--no-bonus`
 
 Disable a specific test.
 
 ##### `--no-tests`
 This will disable all testing suites but run the other tests.
+
+##### `--do-benchmark`
+Enables speed benchmark for libft
 
 #### `--show-c` and `--show-w`
 These options will display respectively the License and the Warranty.

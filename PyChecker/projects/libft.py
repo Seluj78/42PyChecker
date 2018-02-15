@@ -69,7 +69,8 @@ def check(root_path: str, args):
         author_results = author.check(args.path)
     if not args.no_required:
         required_results = check_required(args.path, required_functions)
-    has_libft_bonuses, bonus_result = check_bonuses(args.path, bonus_functions)
+    if not args.no_bonus:
+        has_libft_bonuses, bonus_result = check_bonuses(args.path, bonus_functions)
     if not args.no_extra:
         extra_functions = count_extras(args.path, required_functions, bonus_functions)
     if not args.no_norm:
@@ -97,7 +98,8 @@ def check(root_path: str, args):
         print("Author File: \n" + author_results + '\n')
     if not args.no_required:
         print("Required Functions: \n" + required_results + '\n')
-    print("Bonus Functions: \n" + bonus_result + '\n')
+    if not args.no_bonus:
+        print("Bonus Functions: \n" + bonus_result + '\n')
     if not args.no_extra:
         # @todo: Stats on all c/h files of project, like with `cloc' ?
         print("Extra Functions: -- You have {}\n".format(len(extra_functions)))
