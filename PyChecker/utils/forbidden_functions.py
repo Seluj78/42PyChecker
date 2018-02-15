@@ -21,7 +21,7 @@ def check(project_path: str, binary: str, authorized_func, root_path: str):
     print("*---------------------------------------------------------------*")
     ret = ""
     functions_called = []
-    # @todo Check difference between Darwin and Linux `nm'
+    # @todo: Check difference between Darwin and Linux `nm'
     subprocess.run(['make', '-C', project_path, 'all'], stdout=subprocess.PIPE,
                             stderr=subprocess.STDOUT)
     result = subprocess.run(['nm', project_path + '/' + binary],

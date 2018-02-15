@@ -29,4 +29,4 @@ def run(root_path: str, args):
             result = subprocess.run([root_path + '/testing_suites/libft-unit-test/run_test', '-b'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.decode('utf-8')
             print(result)
             file.write(result)
-    # @todo return results from benchmark and tests
+    # @todo: return results from benchmark and tests

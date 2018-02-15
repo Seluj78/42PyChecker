@@ -41,7 +41,7 @@ def execute_test(test_name: str, root_path: str):
         file.write("Warning: This file contains escape sequences. Please use"
                    " `cat' to view it properly.\n")
         file.write("*------------------------------------------------------*\n")
-        # @todo Get the result line of moulitest and parse it.
+        # @todo: Get the result line of moulitest and parse it.
         result = subprocess.run('make ' + test_name + ' -C ' + root_path +
                                 '/testing_suites/moulitest', shell=True,
                                 stdout=subprocess.PIPE,
@@ -67,7 +67,7 @@ def run(project_path: str, has_libft_bonuses: bool, project: str, root_path: str
         with open(root_path + "/testing_suites/moulitest/config.ini", 'w+') as file:
             file.write("LIBFT_PATH = " + project_path)
         include_libft_bonuses(root_path)
-        # @todo Fix moulitest makefile (it starts the bonus even when not asked.)
+        # @todo: Fix moulitest makefile (it starts the bonus even when not asked.)
         if not has_libft_bonuses:
             exclude_libft_bonuses(root_path)
             results = execute_test("libft_bonus", root_path)

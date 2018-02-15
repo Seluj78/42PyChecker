@@ -41,10 +41,10 @@ def run_libft(project_path: str, root_path: str):
                           'lstadd', 'lstiter', 'lstmap']
     missing_functions = []
     for file in maintest_functions:
-        # @todo Add a check to handle libft where file aren't at libft/ but can be in libft/src
+        # @todo: Add a check to handle libft where file aren't at libft/ but can be in libft/src
         if not os.path.exists(project_path + '/ft_' + file + '.c'):
             missing_functions.append(file)
-    # @todo special case for memalloc and memdel
+    # @todo: special case for memalloc and memdel
     comment_define(root_path + '/testing_suites/Maintest/libft/main.c', root_path + '/libft_main.c', missing_functions)
     with open(root_path + "/.mymaintest", 'w+') as file:
         file.write("*------------------------------------------------------*\n")
@@ -62,12 +62,12 @@ def run_libft(project_path: str, root_path: str):
         print(result)
         result = subprocess.run([root_path + '/libft_main.out'], stdout=subprocess.PIPE,
                                 stderr=subprocess.STDOUT).stdout.decode('utf-8')
-        # @todo Count number of OK and FAILs and yellow tests to get score for maintest
+        # @todo: Count number of OK and FAILs and yellow tests to get score for maintest
         file.write(result + '\n')
         print(result)
     if platform.system() == "Linux":
         print("-- Disclaimer: Some of these test may fail where they woudn't on Darwin. (Because Linux ?)")
     os.remove(root_path + "/libft_main.c")
     os.remove(root_path + "/libft_main.out")
-    # @todo Check if FAIL is the right keyword.
+    # @todo: Check if FAIL is the right keyword.
     return result.count("OK"), result.count("FAIL")

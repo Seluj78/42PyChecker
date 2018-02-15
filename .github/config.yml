@@ -1,2 +1,2 @@
 todo:
-  keyword: ['@todo', 'TODO:', 'TODO', '@todo:']
+  keyword: "@todo:"

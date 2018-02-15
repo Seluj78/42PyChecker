@@ -78,7 +78,7 @@ def check_makefile_all(project_path: str, binary_name: str, root_path: str):
                 print("-> Error when processing rule `all':"
                            " It should NOT have removed *.o")
                 error_count += 1
-            # @todo [ -z "$(echo ${MAKEALLTWICE} | grep -i "Nothing to be done")" -a -z "$(echo ${MAKEALLTWICE} | grep -i "is up to date")" ] && printf "%s\n" "-> Failing rule: Processing the rule 'all' twice in a row should result in nothing to be done" && RET=1
+            # @todo: [ -z "$(echo ${MAKEALLTWICE} | grep -i "Nothing to be done")" -a -z "$(echo ${MAKEALLTWICE} | grep -i "is up to date")" ] && printf "%s\n" "-> Failing rule: Processing the rule 'all' twice in a row should result in nothing to be done" && RET=1
     return error_count
 
 
@@ -253,7 +253,7 @@ def check_makefile_name(project_path: str, binary_name: str, root_path: str):
                 print("-> Error when processing rule `fclean': It should"
                            " NOT have removed *.o\n")
                 error_count += 1
-            # @todo [ -z "$(echo ${MAKEALLTWICE} | grep -i "Nothing to be done")" -a -z "$(echo ${MAKEALLTWICE} | grep -i "is up to date")" ] && printf "%s\n" "-> Failing rule: Processing the rule 'all' twice in a row should result in nothing to be done" && RET=1
+            # @todo: [ -z "$(echo ${MAKEALLTWICE} | grep -i "Nothing to be done")" -a -z "$(echo ${MAKEALLTWICE} | grep -i "is up to date")" ] && printf "%s\n" "-> Failing rule: Processing the rule 'all' twice in a row should result in nothing to be done" && RET=1
     return error_count
 
 

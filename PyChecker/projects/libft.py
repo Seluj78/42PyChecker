@@ -65,7 +65,7 @@ def check(root_path: str, args):
     bonus_functions = ['ft_lstnew.c', 'ft_lstdelone.c', 'ft_lstdel.c',
                        'ft_lstiter.c', 'ft_lstadd.c', 'ft_lstmap.c']
     authorized_functions = ['free', 'malloc', 'write', 'main']
-    # @todo add libft-unit-test to the testing suite
+    # @todo: add libft-unit-test to the testing suite
     if not args.no_author:
         author_results = author.check(args.path)
     if not args.no_required:
@@ -88,7 +88,7 @@ def check(root_path: str, args):
     if not args.no_maintest:
         maintest_ok, maintest_fail = maintest.run_libft(args.path, root_path)
     if not args.no_libft_unit_test:
-        # @todo Add return message/values to results for libft-unit-test
+        # @todo: Add return message/values to results for libft-unit-test
         libft_unit_test.run(root_path, args)
     print("\n\n\nThe results are in:\n")
     if not args.no_author:
@@ -97,7 +97,7 @@ def check(root_path: str, args):
         print("Required Functions: \n" + required_results + '\n')
     print("Bonus Functions: \n" + bonus_result + '\n')
     if not args.no_extra:
-        # @todo Stats on all c/h files of project, like with `cloc' ?
+        # @todo: Stats on all c/h files of project, like with `cloc' ?
         print("Extra Functions: -- You have {}\n".format(len(extra_functions)))
     if not args.no_norm:
         print("Norme results: \n" + norm_results + '\n')

@@ -6,7 +6,7 @@ import os
 import argparse
 import platform
 from PyChecker.projects import libft, ft_commandements, other
-# @todo Add verbose output
+# @todo: Add verbose output
 
 
 def print_header():
@@ -38,7 +38,7 @@ def main():
     parser.add_argument("--show-w", help="Displays the warranty warning from the license.", action="store_true")
     parser.add_argument("--show-c", help="Displays the conditions warning from the license.", action="store_true")
     parser.add_argument("--no-tests", help="Disables all the testing suites for the project.", action="store_true")
-    # @todo Check what option is given based on the selected project.
+    # @todo: Check what option is given based on the selected project.
     parser.add_argument("--no-required", help="Disables required functions check", action="store_true")
     parser.add_argument("--no-libft-unit-test", help="Disables libft-unit-test", action="store_true")
     # @todo: Fix --do-benchmark option for libft-unit-test
@@ -83,10 +83,10 @@ def main():
     print_header()
     if args.project == "libft":
         libft.check(root_path, args)
-    # @todo Handle options for 42commandements: No option can be passed (like --no-norm)
+    # @todo: Handle options for 42commandements: No option can be passed (like --no-norm)
     if args.project == "42commandements":
         ft_commandements.check(args)
-    # @todo Handle options for other: No option can be passed (like --no-norm)
+    # @todo: Handle options for other: No option can be passed (like --no-norm)
     if args.project == "other":
         other.check(root_path, args)
 

@@ -17,7 +17,7 @@ def check(project_path: str):
      2 if there's too many lines in the file,
      3 if the newline char is missing in the end of line
     """
-    # @todo message and handle multiple authors
+    # @todo: message and handle multiple authors
     print("*---------------------------------------------------------------*")
     print("*--------------------------Author file--------------------------*")
     print("*---------------------------------------------------------------*")
