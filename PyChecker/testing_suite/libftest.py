@@ -6,10 +6,6 @@
 import os
 import subprocess
 
-from tempfile import mkstemp
-from shutil import move
-from os import fdopen, remove
-
 
 def replace_my_config(root_path: str, project_path: str):
     with open(root_path + "/testing_suites/libftest/my_config.sh", 'w+') as file:

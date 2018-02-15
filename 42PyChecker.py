@@ -5,7 +5,7 @@
 import os
 import argparse
 import platform
-from PyChecker.projects import libft, ft_commandements, other
+from PyChecker.projects import libft, ft_commandements, other, fillit
 
 
 def print_header():
@@ -35,7 +35,7 @@ def main():
                         action="store_true")
     parser.add_argument("--no-gui", help="disables the Graphical User Interface",
                         action="store_true")
-    parser.add_argument("--project", help="Specifies the type of project you want to check", choices=['libft', '42commandements', 'other'], default=None)
+    parser.add_argument("--project", help="Specifies the type of project you want to check", choices=['libft', '42commandements', 'other', 'fillit'], default=None)
     parser.add_argument("--no-libftest", help="Disables Libftest", action="store_true")
     parser.add_argument("--no-maintest", help="Disables Maintest", action="store_true")
     parser.add_argument("--no-moulitest", help="Disables Moulitest", action="store_true")
@@ -52,8 +52,8 @@ def main():
     # @todo: Check what option is given based on the selected project.
     parser.add_argument("--no-required", help="Disables required functions check", action="store_true")
     parser.add_argument("--no-libft-unit-test", help="Disables libft-unit-test", action="store_true")
-    parser.add_argument("--do-benchmark", help="Disables libft-unit-test benchmarking", action="store_true")
-
+    parser.add_argument("--do-benchmark", help="Enables libft-unit-test benchmarking", action="store_true")
+    parser.add_argument("--no-fillit-checker", help="Disables fillit_checker", action="store_true")
 
     # Calls the parser for the arguments we asked to implement.
     args = parser.parse_args()
@@ -116,6 +116,8 @@ def main():
     # @todo: Handle options for other: No option can be passed (like --no-norm)
     if args.project == "other":
         other.check(root_path, args)
+    if args.project == "fillit":
+        fillit.check(root_path, args)
 
 
 if __name__ == '__main__':
