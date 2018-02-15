@@ -29,6 +29,7 @@ def check(project_path: str, root_path: str):
     if files == "":
         print("-- No source file (.c) or header (.h) to check")
         return "-- No source file (.c) or header (.h) to check"
+
     with open(root_path + "/.mynorme", 'w+') as file:
         try:
             # Run the norminette on those files
@@ -43,7 +44,6 @@ def check(project_path: str, root_path: str):
             file.write(result)
             error_count = 0
             warning_count = 0
-            # Count the results
             error_count = result.count('Error')
             warning_count = result.count('Warning')
             if error_count != 0 or warning_count != 0:

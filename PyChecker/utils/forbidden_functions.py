@@ -16,29 +16,33 @@ def check(project_path: str, authorized_func, root_path: str):
     :param binary_name: The binary that you want to analyze
     :param authorized_func: The functions authorized by the project.
     """
-    with open(project_path + '/Makefile', 'r') as file:
-        data = file.read()
-        binary = re.findall("NAME[\s]*=[\s]*(.*)", data)[0]
     print("*---------------------------------------------------------------*")
     print("*----------------------Forbidden functions:---------------------*")
     print("*---------------------------------------------------------------*")
     ret = ""
     functions_called = []
-    # @todo: Check difference between Darwin and Linux `nm'
-    subprocess.run(['make', '-C', project_path, 'all'], stdout=subprocess.PIPE,
-                            stderr=subprocess.STDOUT)
+
+    # Get binary name
+    with open(project_path + '/Makefile', 'r') as file:
+        data = file.read()
+        binary = re.findall("NAME[\s]*=[\s]*(.*)", data)[0]
+
+    subprocess.run(['make', '-C', project_path, 'all'])
     result = subprocess.run(['nm', project_path + '/' + binary],
                             stdout=subprocess.PIPE,
                             stderr=subprocess.STDOUT).stdout.decode('utf-8')
     for line in result.splitlines():
         if "U " in line:
             functions_called.append(re.sub(' +', ' ', line))
+
+    # Os check for nm differences
     if platform.system() == "Darwin":
         sys_calls = {func.replace(' U _', '') for func in functions_called}
     elif platform.system() == "Linux":
         sys_calls = {func.replace(' U ', '') for func in functions_called}
     else:
         sys_calls = ['Error']
+
     sys_calls = [item for item in sys_calls if not item.startswith("ft_")]
     extra_function_call = [item for item in sys_calls if item not in authorized_func]
     with open(root_path + "/.myforbiddenfunctions", 'w+') as file:

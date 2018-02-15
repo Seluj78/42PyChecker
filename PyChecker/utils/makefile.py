@@ -393,6 +393,7 @@ def check(project_path: str, root_path: str):
     print("*---------------------------------------------------------------*")
     print("*----------------------------Makefile---------------------------*")
     print("*---------------------------------------------------------------*")
+
     makefile_path = project_path + '/Makefile'
     if not os.path.exists(makefile_path):
         print("--> Error: Makefile not found.")
@@ -400,6 +401,7 @@ def check(project_path: str, root_path: str):
     with open(makefile_path, 'r') as file:
         data = file.read()
         binary_name = re.findall("NAME[\s]*=[\s]*(.*)", data)[0]
+
     error_count = 0
     error_count += check_makefile_clean_dir(project_path, binary_name, root_path)
     error_count += check_makefile_all(project_path, binary_name, root_path)
@@ -408,6 +410,7 @@ def check(project_path: str, root_path: str):
     error_count += check_makefile_fclean(project_path, binary_name, root_path)
     error_count += check_makefile_name(project_path, binary_name, root_path)
     error_count += check_makefile_phony(project_path, binary_name, root_path)
+
     print("\n\n\t\tFound {} errors on your makefile".format(error_count))
     with open(root_path + "/.mymakefile", 'a') as file:
         file.write("\n\n\t\tFound {} errors on your makefile\n".format(error_count))

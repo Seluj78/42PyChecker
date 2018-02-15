@@ -8,7 +8,7 @@ import subprocess
 
 def include_libft_bonuses(root_path: str):
     """
-    This method removes the `.exclude` extention to the libft bonuses files.
+    This function removes the `.exclude` extention to the libft bonuses files.
     """
     moulitest_libft_tests_path = root_path + "/testing_suites/moulitest/libft_tests/tests"
     files = os.listdir(moulitest_libft_tests_path)
@@ -21,7 +21,7 @@ def include_libft_bonuses(root_path: str):
 
 def exclude_libft_bonuses(root_path: str):
     """
-    This method Adds the `.exclude` extention to the libft bonuses files.
+    This function Adds the `.exclude` extention to the libft bonuses files.
     """
     moulitest_libft_tests_path = root_path + "/testing_suites/moulitest/libft_tests/tests"
     files = os.listdir(moulitest_libft_tests_path)
@@ -32,22 +32,25 @@ def exclude_libft_bonuses(root_path: str):
 
 
 def execute_test(test_name: str, root_path: str):
-    available_tests = ['libft_part1', 'libft_part2', 'libft_bonus', 'get_next_line', 'gnl', 'ft_ls', 'ft_printf']
+    available_tests = ['libft_part1', 'libft_part2', 'libft_bonus',
+                       'get_next_line', 'gnl', 'ft_ls', 'ft_printf']
     if test_name not in available_tests:
         raise ValueError("Given test not in moulitest available tests.")
+
     with open(root_path + "/.mymoulitest", 'w+') as file:
         file.write("*------------------------------------------------------*\n")
         file.write("MOULITEST\n")
         file.write("Warning: This file contains escape sequences. Please use"
                    " `cat' to view it properly.\n")
         file.write("*------------------------------------------------------*\n")
-        # @todo: Get the result line of moulitest and parse it.
+        # Run moulitest
         result = subprocess.run('make ' + test_name + ' -C ' + root_path +
                                 '/testing_suites/moulitest', shell=True,
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.STDOUT).stdout.decode('utf-8')
         file.write(result + '\n')
         print(result)
+    # Parse the result
     with open(root_path + "/.mymoulitest", 'r') as file:
         for line in file:
             if "(dots)." in line:
@@ -60,9 +63,11 @@ def run(project_path: str, has_libft_bonuses: bool, project: str, root_path: str
     print("*--------------------------Moulitest----------------------------*")
     print("*---------------------------------------------------------------*")
     available_projects = ['ft_ls', 'ft_printf', 'gnl', 'libft', 'libftasm']
+
     #  Available projects checks if the given project corresponds to one the moulitest tests.
     if project not in available_projects:
         raise ValueError("given project not in moulitest available projects.")
+
     if project == "libft":
         with open(root_path + "/testing_suites/moulitest/config.ini", 'w+') as file:
             file.write("LIBFT_PATH = " + project_path)

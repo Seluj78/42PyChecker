@@ -91,6 +91,7 @@ def check(root_path: str, args):
             libft_unit_test_results, benchmark_results = libft_unit_test.run(root_path, args)
         else:
             libft_unit_test_results = libft_unit_test.run(root_path, args)
+
     print("\n\n\nThe results are in:\n")
     if not args.no_author:
         print("Author File: \n" + author_results + '\n')

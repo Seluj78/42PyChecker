@@ -10,6 +10,13 @@ import platform
 
 
 def comment_define(source, destination, tokens):
+    """
+    This function will comment defines set in tokens.
+
+    :param source: The file you want to seek from
+    :param destination: The file you want to write in
+    :param tokens: The tokens you want commented
+    """
     with open(source, 'r') as src, open(destination, 'w+') as dst:
         for line in src:
             for token in tokens:
@@ -40,10 +47,12 @@ def run_libft(project_path: str, root_path: str):
                           'itoa', 'strtrim', 'lstnew', 'lstdelone', 'lstdel',
                           'lstadd', 'lstiter', 'lstmap']
     missing_functions = []
+
     for file in maintest_functions:
         # @todo: Add a check to handle libft where file aren't at libft/ but can be in libft/src
         if not os.path.exists(project_path + '/ft_' + file + '.c'):
             missing_functions.append(file)
+
     # @todo: special case for memalloc and memdel
     comment_define(root_path + '/testing_suites/Maintest/libft/main.c', root_path + '/libft_main.c', missing_functions)
     with open(root_path + "/.mymaintest", 'w+') as file:
@@ -52,6 +61,7 @@ def run_libft(project_path: str, root_path: str):
         file.write("Warning: This file contains escape sequences. Please use "
                    "`cat' to view it properly.\n")
         file.write("*------------------------------------------------------*\n")
+
         result = subprocess.run(['gcc', root_path + '/libft_main.c', '-L' + project_path,
                                  '-I' + project_path, "-I" + project_path +
                                  "/include", "-I" + project_path + "/includes",
@@ -62,11 +72,13 @@ def run_libft(project_path: str, root_path: str):
         print(result)
         result = subprocess.run([root_path + '/libft_main.out'], stdout=subprocess.PIPE,
                                 stderr=subprocess.STDOUT).stdout.decode('utf-8')
+
         # @todo: Count number of OK and FAILs and yellow tests to get score for maintest
         file.write(result + '\n')
         print(result)
     if platform.system() == "Linux":
         print("-- Disclaimer: Some of these test may fail where they woudn't on Darwin. (Because Linux ?)")
+    # Cleanup and return
     os.remove(root_path + "/libft_main.c")
     os.remove(root_path + "/libft_main.out")
     # @todo: Check if FAIL is the right keyword.
