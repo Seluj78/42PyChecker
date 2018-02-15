@@ -6,6 +6,7 @@
 import platform
 import subprocess
 import os
+import io
 
 
 def run(root_path: str, args):
@@ -29,4 +30,14 @@ def run(root_path: str, args):
             result = subprocess.run([root_path + '/testing_suites/libft-unit-test/run_test', '-b'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.decode('utf-8')
             print(result)
             file.write(result)
-    # @todo: return results from benchmark and tests
+    # @todo: return results from benchmark
+    with io.open(root_path + '/.mylibftunittest-results', "r", encoding="ISO-8859-1") as file:
+        data = file.read()
+        results = 'OKs: ' + str(data.count('OK')) + '\n'
+        results += 'KOs: ' + str(data.count('KO')) + '\n'
+        results += 'FAILED: ' + str(data.count('FAILED')) + '\n'
+        results += 'NO CRASH: ' + str(data.count('NO CRASH')) + '\n'
+        results += 'protected: ' + str(data.count('protected')) + '\n'
+        results += 'not protected:' + str(data.count('not protected'))
+    print(results)
+    return results

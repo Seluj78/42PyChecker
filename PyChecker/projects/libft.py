@@ -88,8 +88,7 @@ def check(root_path: str, args):
     if not args.no_maintest:
         maintest_ok, maintest_fail = maintest.run_libft(args.path, root_path)
     if not args.no_libft_unit_test:
-        # @todo: Add return message/values to results for libft-unit-test
-        libft_unit_test.run(root_path, args)
+        libft_unit_test_results = libft_unit_test.run(root_path, args)
     print("\n\n\nThe results are in:\n")
     if not args.no_author:
         print("Author File: \n" + author_results + '\n')
@@ -115,4 +114,6 @@ def check(root_path: str, args):
         print("Libft Bonuses: " + libftest_results[2] + '\n')
     if not args.no_maintest:
         print("Maintest: \n{} OKs and {} FAILs.".format(maintest_ok, maintest_fail))
+    if not args.no_libft_unit_test:
+        print('libft-unit-test: \n' + libft_unit_test_results)
     return 0
