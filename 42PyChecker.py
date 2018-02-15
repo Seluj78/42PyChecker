@@ -94,7 +94,8 @@ def main():
     if args.path == "":
         parser.error("`--path' needs to be specified in order for 42PyChecker"
                      " to know where your project is.")
-
+    if args.path[0] != '/':
+        parser.error("`--path' needs to have an absolute path")
     # If a test is disabled and the libft project is selected, the parser will
     # return an error.
     if args.no_libftest and args.project != "libft":
