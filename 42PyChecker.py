@@ -52,8 +52,8 @@ def main():
     # @todo: Check what option is given based on the selected project.
     parser.add_argument("--no-required", help="Disables required functions check", action="store_true")
     parser.add_argument("--no-libft-unit-test", help="Disables libft-unit-test", action="store_true")
-    # @todo: Fix --do-benchmark option for libft-unit-test
-    parser.add_argument("--do-benchmark", help="Disables libft-unit-test benchmarking", action="store_false")
+    parser.add_argument("--do-benchmark", help="Disables libft-unit-test benchmarking", action="store_true")
+
 
     # Calls the parser for the arguments we asked to implement.
     args = parser.parse_args()

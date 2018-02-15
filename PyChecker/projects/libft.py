@@ -65,7 +65,6 @@ def check(root_path: str, args):
     bonus_functions = ['ft_lstnew.c', 'ft_lstdelone.c', 'ft_lstdel.c',
                        'ft_lstiter.c', 'ft_lstadd.c', 'ft_lstmap.c']
     authorized_functions = ['free', 'malloc', 'write', 'main']
-    # @todo: add libft-unit-test to the testing suite
     if not args.no_author:
         author_results = author.check(args.path)
     if not args.no_required:
@@ -88,7 +87,10 @@ def check(root_path: str, args):
     if not args.no_maintest:
         maintest_ok, maintest_fail = maintest.run_libft(args.path, root_path)
     if not args.no_libft_unit_test:
-        libft_unit_test_results = libft_unit_test.run(root_path, args)
+        if args.do_benchmark:
+            libft_unit_test_results, benchmark_results = libft_unit_test.run(root_path, args)
+        else:
+            libft_unit_test_results = libft_unit_test.run(root_path, args)
     print("\n\n\nThe results are in:\n")
     if not args.no_author:
         print("Author File: \n" + author_results + '\n')
@@ -115,5 +117,9 @@ def check(root_path: str, args):
     if not args.no_maintest:
         print("Maintest: \n{} OKs and {} FAILs.".format(maintest_ok, maintest_fail))
     if not args.no_libft_unit_test:
-        print('libft-unit-test: \n' + libft_unit_test_results)
+        if args.do_benchmark:
+            # @todo: Strip useless chars from benchmark results
+            print('libft-unit-test: \n' + libft_unit_test_results + '\n\n' + benchmark_results)
+        else:
+            print('libft-unit-test: \n' + libft_unit_test_results)
     return 0
