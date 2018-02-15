@@ -23,9 +23,13 @@ def check(project_path: str, authorized_func, root_path: str):
     functions_called = []
 
     # Get binary name
-    with open(project_path + '/Makefile', 'r') as file:
-        data = file.read()
-        binary = re.findall("NAME[\s]*=[\s]*(.*)", data)[0]
+    try:
+        with open(project_path + '/Makefile', 'r') as file:
+            data = file.read()
+            binary = re.findall("NAME[\s]*=[\s]*(.*)", data)[0]
+    except FileNotFoundError:
+        print(project_path + '/Makefile: File not found. Stopping')
+        return project_path + '/Makefile: File not found. Stopping'
 
     subprocess.run(['make', '-C', project_path, 'all'])
     result = subprocess.run(['nm', project_path + '/' + binary],
