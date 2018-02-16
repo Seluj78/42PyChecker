@@ -48,7 +48,12 @@ def check(project_path: str, authorized_func, root_path: str):
         sys_calls = ['Error']
 
     sys_calls = [item for item in sys_calls if not item.startswith("ft_")]
+    if platform.system() == "Linux":
+        for i, calls in enumerate(sys_calls):
+            sys_calls[i] = calls.split('@', 1)[0]
     extra_function_call = [item for item in sys_calls if item not in authorized_func]
+    print(sys_calls)
+    print(authorized_func)
     with open(root_path + "/.myforbiddenfunctions", 'w+') as file:
         for item in extra_function_call:
             # This is to ignore functions like `__stack_chk_fail'

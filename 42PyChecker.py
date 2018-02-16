@@ -51,12 +51,6 @@ def check_args_rules(parser, args):
     # disabled, no matter the project.
     if args.project == "other" and args.no_tests:
         parser.error("`--no-tests' Can only be applied on projects, not when 'other' is selected.")
-    if args.no_tests:
-        args.no_libftest = True
-        args.no_maintest = True
-        args.no_moulitest = True
-        args.no_libft_unit_test = True
-        args.no_fillit_checker = True
 
     if args.no_author and args.project == "42commandements":
         parser.error("`--no-author' Can only be applied on project, but not on 42commandements.")
@@ -105,6 +99,12 @@ def check_args_rules(parser, args):
     if args.no_fillit_checker and args.project != "fillit":
         parser.error("`--no-fillit-checker' can only be applied if fillit is selected"
                      " with `--project'")
+    if args.no_tests:
+        args.no_libftest = True
+        args.no_maintest = True
+        args.no_moulitest = True
+        args.no_libft_unit_test = True
+        args.no_fillit_checker = True
 
 
 def print_header():
