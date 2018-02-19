@@ -202,5 +202,4 @@ if __name__ == '__main__':
         except KeyboardInterrupt:
             sys.exit(1)
     else:
-        #raise OSError("Sorry, this script can't be run on windows !")
-        main()
+        raise OSError("Sorry, this script can't be run on windows !")
