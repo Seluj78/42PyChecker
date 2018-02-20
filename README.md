@@ -23,8 +23,8 @@ Extra tests may also be performed:
 Complete unit tests are handled through external frameworks whose sources are automatically downloaded, configured and updated in background when you run the script:
 * [**moulitest**](https://github.com/yyang42/moulitest), developed by [@yyang42](https://github.com/yyang42) and other contributors
 * [**libftest**](https://github.com/jtoty/Libftest), developed by [@jtoty](https://github.com/jtoty)
-<!--* [**libft-unit-test**](https://github.com/alelievr/libft-unit-test), developed by [@alelievr](https://github.com/alelievr)-->
-<!--* [**fillit_checker**](https://github.com/anisg/fillit_checker), developed by [@anisg](https://github.com/anisg)-->
+* [**libft-unit-test**](https://github.com/alelievr/libft-unit-test), developed by [@alelievr](https://github.com/alelievr)
+* [**fillit_checker**](https://github.com/anisg/fillit_checker), developed by [@anisg](https://github.com/anisg)
 * [**Maintest**](https://github.com/QuentinPerez/Maintest), developed by [@QuentinPerez](https://github.com/QuentinPerez) and other contributors
 <!--* [**42ShellTester**](https://github.com/we-sh/42ShellTester), developed by [@gabkk](https://github.com/gabkk) and [@jgigault](https://github.com/jgigault)-->
 

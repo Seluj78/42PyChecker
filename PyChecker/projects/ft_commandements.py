@@ -4,6 +4,7 @@
 """
 
 import os
+import logging
 
 
 def check(args):
@@ -15,12 +16,16 @@ def check(args):
      1 if the file doesn't exists,
      2 if the file content is different.
     """
+    logging.info("Started checks for project `42Commandements`")
     if not os.path.exists(args.path + '/rendu'):
+        logging.critical("File rendu not found")
         print("file `rendu' not found.")
         return 1
     with open(args.path + '/rendu', 'r') as file:
         content = file.read()
         if content != "En choisissant d'effectuer ma scolarite a 42, je declare adherer a ces regles ainsi qu'aux valeurs morales qu'elles vehiculent.\n":
+            logging.critical("Error: The `rendu' file content is different from what is expected.")
             print("Error: The `rendu' file content is different from what is expected.")
             return 2
+    logging.info("Finished checks for project `42Commandements`")
     return 0

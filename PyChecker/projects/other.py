@@ -3,9 +3,11 @@
     See full notice in `LICENSE'
 """
 from PyChecker.utils import author, norme, makefile
+import logging
 
 
 def check(root_path: str, args):
+    logging.info("Starting check for project `other`")
     if not args.no_author:
         author.check(args.path)
     if not args.no_norm:

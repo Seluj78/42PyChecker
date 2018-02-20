@@ -5,10 +5,11 @@
 
 from PyChecker.utils import author, norme, makefile, forbidden_functions
 from PyChecker.testing_suite import fillit_checker
+import logging
 
 
 def check(root_path: str, args):
-
+    logging.info("Started checks for project `fillit`")
     authorized_functions = ['exit', 'open', 'close', 'write', 'read', 'malloc',
                             'free', 'main']
 
@@ -35,4 +36,5 @@ def check(root_path: str, args):
         print("Forbidden Functions: \n" + forbidden_functions_results)
     if not args.no_fillit_checker:
         print("Fillit Checker: \n" + fillit_checker_results)
+    logging.info("Finished checks for project `fillit`")
     return 0

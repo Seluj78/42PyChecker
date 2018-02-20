@@ -4,7 +4,7 @@
 """
 
 import os
-
+import logging
 
 def check(project_path: str):
     """
@@ -17,6 +17,7 @@ def check(project_path: str):
      2 if there's too many lines in the file,
      3 if the newline char is missing in the end of line
     """
+    logging.info("Started author file check.")
     # @todo: message and handle multiple authors
     print("*---------------------------------------------------------------*")
     print("*--------------------------Author file--------------------------*")
@@ -30,22 +31,27 @@ def check(project_path: str):
         count = len(open(author_us).readlines())
         author = "us"
     else:
+        logging.error("AUTHOR: Error: Author file not found.")
         print("--> Error: Author file not found")
         return "--> Error: Author file not found"
     if count != 1:
+        logging.error("AUTHOR: Error: Too many lines in author file (Or the file is empty)")
         print("--> Error: Too many lines in author file (Or the file is empty)")
         return "--> Error: Too many lines in author file (Or the file is empty)"
     if author == "fr":
         with open(author_fr, 'r') as file:
             content = file.read()
             if "\n" not in content:
+                logging.error("AUTHOR: Error: Missing <newline> character at the end of line")
                 print("--> Error: Missing <newline> character at the end of line")
                 return "--> Error: Missing <newline> character at the end of line"
     elif author == "us":
         with open(author_us, 'r') as file:
             content = file.read()
             if "\n" not in content:
+                logging.error("AUTHOR: Error: Missing <newline> character at the end of line")
                 print("--> Error: Missing <newline> character at the end of line")
                 return "--> Error: Missing <newline> character at the end of line"
     print("-- NTR (Nothing to Report)")
+    logging.info("Finished author file check.")
     return "-- NTR (Nothing to Report)"

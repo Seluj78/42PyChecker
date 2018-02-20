@@ -7,6 +7,7 @@ import argparse
 import platform
 from PyChecker.projects import libft, ft_commandements, other, fillit
 import sys
+import logging
 
 
 def check_args_rules(parser, args):
@@ -34,15 +35,19 @@ def check_args_rules(parser, args):
 
     :param args: the parsed arguments passed to the program
     """
-
+    logging.info("Starting argument checking.")
     # If no project is given the parser sends an error.
     if args.project is None:
+        logging.critical('You need to specify a project.')
         parser.error("You need to specify a project.")
     # If the path of the selected project is empty, the parser prints an error.
     if args.path == "":
+        logging.critical("`--path' needs to be specified in order for 42PyChecker"
+                     " to know where your project is.")
         parser.error("`--path' needs to be specified in order for 42PyChecker"
                      " to know where your project is.")
     if args.path[0] != '/':
+        logging.critical("`--path' needs to have an absolute path")
         parser.error("`--path' needs to have an absolute path")
     # If a test is disabled and the libft project is selected, the parser will
     # return an error.
@@ -50,61 +55,83 @@ def check_args_rules(parser, args):
     # Here, if the `--no-tests` option is set, all the testing suites will be
     # disabled, no matter the project.
     if args.project == "other" and args.no_tests:
+        logging.critical("`--no-tests' Can only be applied on projects, not when 'other' is selected.")
         parser.error("`--no-tests' Can only be applied on projects, not when 'other' is selected.")
 
     if args.no_author and args.project == "42commandements":
+        logging.critical("`--no-author' Can only be applied on project, but not on 42commandements.")
         parser.error("`--no-author' Can only be applied on project, but not on 42commandements.")
 
     forbidden_functions_projects = ['fdf', 'fillit', 'ft_ls', 'ft_p', 'ft_printf', 'gnl', 'get_next_line', 'libft', 'libftasm', 'libft_asm', 'minishell', 'pushswap', 'push_swap']
     if args.no_forbidden_functions and args.project not in forbidden_functions_projects:
+        logging.critical("`--no-forbidden-functions' Cannot be set if project isn't one of " + str(forbidden_functions_projects))
         parser.error("`--no-forbidden-functions' Cannot be set if project isn't one of " + str(forbidden_functions_projects))
 
     if args.no_makefile and args.project == "42commandements":
+        logging.critical("`--no-makefile' Can only be applied on project, but not on 42commandements.")
         parser.error("`--no-makefile' Can only be applied on project, but not on 42commandements.")
 
     if args.no_norm and args.project == "42commandements":
+        logging.critical("`--no-norm' Can only be applied on project, but not on 42commandements.")
         parser.error("`--no-norm' Can only be applied on project, but not on 42commandements.")
 
     if args.no_static and args.project != "libft":
+        logging.critical("`--no-static' Can only be applied project `libft'")
         parser.error("`--no-static' Can only be applied project `libft'")
 
     if args.no_extra and args.project != "libft":
+        logging.critical("`--no-extra' Can only be applied project `libft'")
         parser.error("`--no-extra' Can only be applied project `libft'")
 
     if args.no_required and args.project != "libft":
+        logging.critical("`--no-required' Can only be applied project `libft'")
         parser.error("`--no-required' Can only be applied project `libft'")
 
     if args.no_bonus and args.project != "libft":
+        logging.critical("`--no-bonus' Can only be applied project `libft'")
         parser.error("`--no-bonus' Can only be applied project `libft'")
 
     if args.do_benchmark and args.project != "libft":
+        logging.critical("`--do-benchmark' Can only be applied project `libft'")
         parser.error("`--do-benchmark' Can only be applied project `libft'")
 
     if args.no_libftest and args.project != "libft":
+        logging.critical("`--no-libftest' can only be applied if libft is selected "
+                     "with `--project'")
         parser.error("`--no-libftest' can only be applied if libft is selected "
                      "with `--project'")
 
     if args.no_maintest and args.project != "libft":
+        logging.critical("`--no-maintest' can only be applied if libft is selected "
+                     "with `--project'")
         parser.error("`--no-maintest' can only be applied if libft is selected "
                      "with `--project'")
 
     if args.no_moulitest and args.project != "libft":
+        logging.critical("`--no-moulitest' can only be applied if libft is selected"
+                     " with `--project'")
         parser.error("`--no-moulitest' can only be applied if libft is selected"
                      " with `--project'")
 
     if args.no_libft_unit_test and args.project != "libft":
+        logging.critical("`--no-libft-unit-test' can only be applied if libft is selected"
+                     " with `--project'")
         parser.error("`--no-libft-unit-test' can only be applied if libft is selected"
                      " with `--project'")
 
     if args.no_fillit_checker and args.project != "fillit":
+        logging.critical("`--no-fillit-checker' can only be applied if fillit is selected"
+                     " with `--project'")
         parser.error("`--no-fillit-checker' can only be applied if fillit is selected"
                      " with `--project'")
     if args.no_tests:
+        logging.debug("Option `--no-tests` selected. Setting all tests options to 'True' to disable them all")
         args.no_libftest = True
         args.no_maintest = True
         args.no_moulitest = True
         args.no_libft_unit_test = True
         args.no_fillit_checker = True
+    logging.info("Argument checking done.")
 
 
 def print_header():
@@ -130,8 +157,8 @@ def main():
 
     # @todo: Add verbose output
     # Adds all the arguments one by one.
-    parser.add_argument("-v", "--verbose", help="Increases output verbosity",
-                        action="store_true")
+    parser.add_argument("--log", help="Sets up the log output.",
+                        choices=['debug', 'DEBUG', 'info', 'INFO', 'warning', 'WARNING', 'error', 'ERROR', 'critical', 'CRITICAL'])
     parser.add_argument("--no-gui", help="disables the Graphical User Interface",
                         action="store_true")
     parser.add_argument("--project", help="Specifies the type of project you want to check", choices=['libft', '42commandements', 'other', 'fillit'], default=None)
@@ -176,22 +203,33 @@ def main():
         with open(root_path + '/.github/LICENSE.lesser', 'r') as file:
             print(file.read())
         sys.exit()
-
+    # @todo: Check for log file size and delete it if needed.
+    logging.basicConfig(filename='42PyChecker.log', level=args.log.upper(), format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', datefmt='%d-%m-%Y:%H:%M:%S')
+    logging.info("************************************************************")
+    logging.info("***********Starting new instance of 42PyChecker*************")
+    logging.info("************************************************************")
+    # @todo: Format the args to be printed in log
+    logging.debug("Arguments passed : {}".format(args))
     check_args_rules(parser, args)
 
     # Here we create the directory where the testing suites will be cloned
     if not os.path.exists(root_path + '/testing_suites'):
+        logging.debug("The directory `{}/testing_suites` doesn't exist. Creating it".format(root_path))
         os.makedirs(root_path + '/testing_suites')
 
     # Here we select the project and start the check based on the argument `--project`
     if args.project == "libft":
+        logging.info("Starting {} project check".format(args.project))
         libft.check(root_path, args)
     if args.project == "42commandements":
+        logging.info("Starting {} project check".format(args.project))
         ft_commandements.check(args)
-    if args.project == "other":
-        other.check(root_path, args)
     if args.project == "fillit":
+        logging.info("Starting {} project check".format(args.project))
         fillit.check(root_path, args)
+    if args.project == "other":
+        logging.info("Starting {} project check".format(args.project))
+        other.check(root_path, args)
 
 
 if __name__ == '__main__':

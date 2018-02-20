@@ -7,29 +7,42 @@ import glob
 from PyChecker.utils import author, forbidden_functions, makefile, norme, static
 from PyChecker.testing_suite import maintest, moulitest, libftest
 from PyChecker.testing_suite import libft_unit_test
+import logging
+
 
 def check_required(project_path: str, required_functions):
+    logging.info("LIBFT: Started required function check.")
     while True:
         if all([os.path.isfile(project_path + '/' + function) for function in required_functions]):
             break
         else:
+            logging.debug("LIBFT: ERROR: not all required files are here")
             print("--> ERROR: not all required files are here")
+            logging.info("LIBFT: Finished required function check.")
             return "--> ERROR: not all required files are here"
+    logging.debug("LIBFT: All required functions are present.")
+    logging.info("LIBFT: Finished required function check.")
     return "-- All required functions are present."
 
 def check_bonuses(project_path: str, bonus_functions):
+    logging.info("LIBFT: Started bonus function check")
     has_libft_bonuses = True
     while True:
         if all([os.path.isfile(project_path + '/' + function) for function in bonus_functions]):
+            logging.debug("LIBFT: Found all bonuses files")
             break
         else:
             has_libft_bonuses = False
+            logging.warning("LIBFT: Warning: Warning: not all bonus files are here")
             print("--> Warning: not all bonus files are here")
+            logging.info("LIBFT: Finished bonus function check")
             return has_libft_bonuses, "--> Warning: not all bonus files are here"
+    logging.info("LIBFT: Finished bonus function check")
     return has_libft_bonuses, "-- All bonuses files were found."
 
 
 def count_extras(project_path: str, required_functions, bonus_functions):
+    logging.info("LIBFT: Started extra function count.")
     file_list = []
     for file in glob.glob(project_path + '/*.c'):
         file_list.append(file.replace(project_path + '/', ''))
@@ -38,12 +51,17 @@ def count_extras(project_path: str, required_functions, bonus_functions):
     print("*------------------------Extra functions:-----------------------*")
     print("*---------------------------------------------------------------*")
     print("You have {} extra functions.".format(len(extra_functions)))
+    if extra_functions:
+        logging.debug("Found extra functions:")
     for function in extra_functions:
+        logging.debug(function)
         print(function)
+    logging.info("LIBFT: Finished extra function count.")
     return extra_functions
 
 
 def check(root_path: str, args):
+    logging.info("Started check for project `libft`")
     required_functions = ['libft.h', 'ft_strcat.c', 'ft_strncat.c',
                           'ft_strlcat.c', 'ft_strchr.c', 'ft_strnstr.c',
                           'ft_strrchr.c', 'ft_strclr.c', 'ft_strcmp.c',
@@ -125,4 +143,5 @@ def check(root_path: str, args):
             print('libft-unit-test: \n' + libft_unit_test_results + '\n\n' + benchmark_results + '\n')
         else:
             print('libft-unit-test: \n' + libft_unit_test_results + '\n')
+    logging.info("Finished check for project `libft`")
     return 0
