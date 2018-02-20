@@ -203,6 +203,7 @@ def main():
         with open(root_path + '/.github/LICENSE.lesser', 'r') as file:
             print(file.read())
         sys.exit()
+    # @todo: Fix error when log option not provided
     # @todo: Check for log file size and delete it if needed.
     logging.basicConfig(filename='42PyChecker.log', level=args.log.upper(), format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', datefmt='%d-%m-%Y:%H:%M:%S')
     logging.info("************************************************************")
@@ -236,7 +237,10 @@ if __name__ == '__main__':
     if not platform.system() == "Windows":
         try:
             print_header()
-            main()
+            from PyChecker.window import Application
+            app = Application()
+            app.create_window()
+            #main()
         except KeyboardInterrupt:
             sys.exit(1)
     else:
