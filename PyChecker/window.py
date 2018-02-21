@@ -7,7 +7,7 @@ from tkinter import *
 import os
 import sys
 from tkinter import filedialog
-
+from tkinter import messagebox
 
 class Checkbar(Frame):
     def __init__(self, parent=None, picks=[], side=LEFT, anchor=W):
@@ -49,7 +49,7 @@ class Application:
         label.image = logo
         label.pack()
 
-
+            # @todo: Display path somewhere when selected
         Button(self.window, text="Select Project Path", width=20, command=self.get_project_path).pack()
 
         self.project = StringVar(self.window)
@@ -91,10 +91,18 @@ class Application:
 
     def start(self):
         if not self.project_name:
-            print("You need to select a project")
+            messagebox.showerror("Project not specified", "You need to specify the project you want to test.")
             return
         if not self.path:
-            print("You need to select a path")
+            messagebox.showerror("Path not specified", "You need to specify the path of the project you want to test.")
+            return
+        has_selected = 0
+        for choice in self.options_choices.state():
+            if choice == 1:
+                has_selected = 1
+                break
+        if not has_selected:
+            messagebox.showwarning("No options", "You havent selected any options.")
             return
         print(self.project_name)
         print(self.path)
