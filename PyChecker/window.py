@@ -52,7 +52,6 @@ class Application:
 
             # @todo: Display path somewhere when selected
         Button(self.window, text="Select Project Path", width=20, command=self.get_project_path).pack()
-
         self.project = StringVar(self.window)
         self.project_name = None
         self.options = []
@@ -156,15 +155,15 @@ class Application:
         if not self.path:
             messagebox.showerror("Path not specified", "You need to specify the path of the project you want to test.")
             return
-        # @todo: Can't select 42commandements because of this. Need workaround
-        has_selected = 0
-        for choice in self.options_choices.state():
-            if choice == 1:
-                has_selected = 1
-                break
-        if not has_selected:
-            messagebox.showwarning("No options", "You havent selected any options.")
-            return
+        if not self.project_name == "42commandements":
+            has_selected = 0
+            for choice in self.options_choices.state():
+                if choice == 1:
+                    has_selected = 1
+                    break
+            if not has_selected:
+                messagebox.showwarning("No options", "You havent selected any options.")
+                return
         print(self.project_name)
         print(self.path)
         print(list(self.options_choices.state()))
