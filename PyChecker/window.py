@@ -27,6 +27,7 @@ class Checkbar(Frame):
 
 class Application:
     def __init__(self):
+        self.root_path = os.path.dirname(os.path.realpath(__file__))
         self.path = None
         self.window = Tk()
         self.window.title("42PyChecker")
@@ -68,7 +69,66 @@ class Application:
         Button(self.window, text="Select All", command=self.select_all).pack(side=BOTTOM)
         Button(self.window, text="Deselect All", command=self.deselect_all).pack(side=BOTTOM)
 
+
+        self.main_menu = Menu(self.window)
+
+        self.about_menu = Menu(self.main_menu)
+        self.about_menu.add_command(label="About", command=self.display_about)
+        self.about_menu.add_command(label="Warranty", command=self.display_warranty)
+        self.about_menu.add_command(label="License", command=self.display_license)
+
+        self.main_menu.add_cascade(label="About", menu=self.about_menu)
+
+        self.window.config(menu=self.main_menu)
         self.window.bind('<Escape>', self.close_window_escape)
+
+    def display_about(self):
+        msg = "\t42PyChecker  Copyright (C) 2018-present Jules Lasne " \
+              "<jules.lasne@gmail.com>\n\tThis program comes with ABSOLUTELY " \
+              "NO WARRANTY; for details run with `--show-w'.\n\tThis is free " \
+              "software, and you are welcome to redistribute it\n\tunder " \
+              "certain conditions; run with `--show-c' for details."
+        popup = Tk()
+        popup.wm_title("About")
+        label = Label(popup, text=msg)
+        label.pack(side="top", fill="x", pady=10)
+        B1 = Button(popup, text="Okay", command=popup.destroy)
+        B1.pack()
+        popup.mainloop()
+
+    def display_warranty(self):
+        msg = "THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED" \
+              " BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING\n" \
+              " THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM" \
+              " “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR\n" \
+              " IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES" \
+              " OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE\n" \
+              " ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS" \
+              " WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME\n" \
+              " THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION."
+        popup = Tk()
+        popup.wm_title("Warranty Statement")
+        label = Label(popup, text=msg)
+        label.pack(side="top", fill="x", pady=10)
+        B1 = Button(popup, text="Okay", command=popup.destroy)
+        B1.pack()
+        popup.mainloop()
+
+    def display_license(self):
+        popup = Tk()
+        popup.wm_title("License")
+        with open(self.root_path + '/../.github/LICENSE.lesser', 'r') as file:
+            filedata = file.read()
+        txt = Text(popup, borderwidth=3, relief="sunken")
+        txt.insert(END, filedata)
+        txt.config(font=("consolas", 12), undo=True, wrap='word')
+        txt.grid(row=0, column=0, sticky="nsew", padx=2, pady=2)
+        scrollb = Scrollbar(popup, command=txt.yview)
+        scrollb.grid(row=0, column=1, sticky='nsew')
+        txt['yscrollcommand'] = scrollb.set
+        B1 = Button(popup, text="Okay", command=popup.destroy)
+        B1.grid()
+        popup.mainloop()
 
     def select_all(self):
         for option in self.options_choices.chks:
@@ -96,6 +156,7 @@ class Application:
         if not self.path:
             messagebox.showerror("Path not specified", "You need to specify the path of the project you want to test.")
             return
+        # @todo: Can't select 42commandements because of this. Need workaround
         has_selected = 0
         for choice in self.options_choices.state():
             if choice == 1:
