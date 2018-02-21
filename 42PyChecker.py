@@ -6,6 +6,7 @@ import os
 import argparse
 import platform
 from PyChecker.projects import libft, ft_commandements, other, fillit
+from PyChecker.window import Application
 import sys
 import logging
 
@@ -158,7 +159,7 @@ def main():
     # @todo: Add verbose output
     # Adds all the arguments one by one.
     parser.add_argument("--log", help="Sets up the log output.",
-                        choices=['debug', 'DEBUG', 'info', 'INFO', 'warning', 'WARNING', 'error', 'ERROR', 'critical', 'CRITICAL'])
+                        choices=['debug', 'DEBUG', 'info', 'INFO', 'warning', 'WARNING', 'error', 'ERROR', 'critical', 'CRITICAL'], default='warning', const='warning', nargs='?',)
     parser.add_argument("--no-gui", help="disables the Graphical User Interface",
                         action="store_true")
     parser.add_argument("--project", help="Specifies the type of project you want to check", choices=['libft', '42commandements', 'other', 'fillit'], default=None)
@@ -211,12 +212,16 @@ def main():
     logging.info("************************************************************")
     # @todo: Format the args to be printed in log
     logging.debug("Arguments passed : {}".format(args))
-    check_args_rules(parser, args)
 
     # Here we create the directory where the testing suites will be cloned
     if not os.path.exists(root_path + '/testing_suites'):
         logging.debug("The directory `{}/testing_suites` doesn't exist. Creating it".format(root_path))
         os.makedirs(root_path + '/testing_suites')
+
+    if not args.no_gui:
+        app = Application(args)
+
+    check_args_rules(parser, args)
 
     # Here we select the project and start the check based on the argument `--project`
     if args.project == "libft":
@@ -237,11 +242,10 @@ if __name__ == '__main__':
     if not platform.system() == "Windows":
         try:
             print_header()
-            from PyChecker.window import Application
-            app = Application()
-            app.create_window()
-            #main()
+            main()
         except KeyboardInterrupt:
             sys.exit(1)
     else:
-        raise OSError("Sorry, this script can't be run on windows !")
+        #raise OSError("Sorry, this script can't be run on windows !")
+        main()
+
