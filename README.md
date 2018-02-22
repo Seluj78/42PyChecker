@@ -39,7 +39,7 @@ The non-interactive mode enables you to launch a test suite without any prompt.
 You must specify the two options `--project` and `--path`.
 Here is an example of use with the project `libft`:
 ```bash
-python3 ~/42PyChecker/42PyChecker.py --project=libft --path=/Users/admin/Projects/libft/
+python3 ~/42PyChecker/42PyChecker.py --project=libft --path=/Users/admin/Projects/libft/ --no-gui
 ```
 
 ## options
